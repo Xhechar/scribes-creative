@@ -1,0 +1,94 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  UserId   String   @id @default(uuid())
+  Email    String   @unique
+  Password String
+  CreatedAt DateTime @default(now())
+  UpdatedAt DateTime @updatedAt
+
+  //relationships
+  RefreshTokens RefreshToken[]
+}
+
+model RefreshToken {
+  TokenId  String @id @default(uuid())
+  UserId  String
+  Token   String
+  ExpiresAt DateTime
+
+  //relationships
+  User User @relation(fields: [UserId], references: [UserId], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model Category {
+  CategoryId String @id @default (uuid())
+  Name    String  @unique
+  Image   String?
+  CreatedAt DateTime @default(now())
+  UpdatedAt DateTime @updatedAt
+
+  //relationships
+  Services Service[]
+}
+
+model Service {
+  ServiceId   String   @id @default(uuid())
+  Name        String   @unique
+  Description String?
+  Image     String?
+  CategoryId String
+  Items      String[]
+  CreatedAt DateTime @default(now())
+  UpdatedAt DateTime @updatedAt
+
+  //relationships
+  Category Category @relation(fields: [CategoryId], references: [CategoryId], onDelete: NoAction, onUpdate: NoAction)
+  Projects Project[]
+}
+
+model Project {
+  ProjectId   String   @id @default(uuid())
+  Name        String
+  Description String?
+  Image     String?
+  ServiceId String?
+  CreatedAt DateTime @default(now())
+  UpdatedAt DateTime @updatedAt
+
+  //relationships
+  Service Service? @relation(fields: [ServiceId], references: [ServiceId], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model Member {
+  MemberId String @id @default(uuid())
+  Name     String
+  Role     String
+  Image    String?
+  Bio      String?
+  CreatedAt DateTime @default(now())
+  UpdatedAt DateTime @updatedAt
+}
+
+model Review {
+  ReviewId String @id @default(uuid())
+  Name     String
+  Email    String
+  Rating   Int
+  Comment  String
+  Thumbnail String?
+  CreatedAt DateTime @default(now())
+  UpdatedAt DateTime @updatedAt
+}
