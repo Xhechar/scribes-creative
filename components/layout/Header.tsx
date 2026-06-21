@@ -18,9 +18,9 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { FaWhatsapp } from "react-icons/fa6";
-import { categories } from "@/lib/data/categories";
 import { siteConfig } from "@/lib/data/site-config";
 import { cn } from "@/lib/utils";
+import type { NavCategory } from "@/types";
 
 const iconMap: Record<string, LucideIcon> = {
   Palette,
@@ -40,7 +40,7 @@ const navLinks = [
   { label: "Contact", href: "/contact" },
 ];
 
-export function Header() {
+export function Header({ categories }: { categories: NavCategory[] }) {
   const [servicesOpen, setServicesOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -85,7 +85,9 @@ export function Header() {
                 <div className="rounded-lg border border-brand-navy/10 bg-brand-paper p-6 shadow-xl">
                   <div className="grid grid-cols-2 gap-4">
                     {creative.map((category) => {
-                      const Icon = iconMap[category.icon];
+                      const Icon = category.icon
+                        ? iconMap[category.icon]
+                        : null;
                       return (
                         <Link
                           key={category.id}
@@ -114,7 +116,9 @@ export function Header() {
                         Walk-in &amp; document services
                       </span>
                       {utility.map((category) => {
-                        const Icon = iconMap[category.icon];
+                        const Icon = category.icon
+                          ? iconMap[category.icon]
+                          : null;
                         return (
                           <Link
                             key={category.id}
@@ -187,7 +191,7 @@ export function Header() {
           </span>
           <div className="flex flex-col gap-1">
             {categories.map((category) => {
-              const Icon = iconMap[category.icon];
+              const Icon = category.icon ? iconMap[category.icon] : null;
               return (
                 <Link
                   key={category.id}
