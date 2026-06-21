@@ -12,83 +12,278 @@ datasource db {
   provider = "postgresql"
 }
 
-model User {
-  UserId   String   @id @default(uuid())
-  Email    String   @unique
-  Password String
-  CreatedAt DateTime @default(now())
-  UpdatedAt DateTime @updatedAt
-
-  //relationships
-  RefreshTokens RefreshToken[]
+enum CategoryType {
+  CREATIVE
+  UTILITY
 }
 
-model RefreshToken {
-  TokenId  String @id @default(uuid())
-  UserId  String
-  Token   String
-  ExpiresAt DateTime
-
-  //relationships
-  User User @relation(fields: [UserId], references: [UserId], onDelete: NoAction, onUpdate: NoAction)
+enum ReviewSource {
+  GOOGLE
+  SITE
 }
 
-model Category {
-  CategoryId String @id @default (uuid())
-  Name    String  @unique
-  Image   String?
-  CreatedAt DateTime @default(now())
-  UpdatedAt DateTime @updatedAt
+enum LeadStatus {
+  NEW
+  CONTACTED
+  CONVERTED
+  CLOSED
+}
 
-  //relationships
-  Services Service[]
+// ───────────────────────────────────────────────────────────────────────
+// Site-wide settings (singleton row)
+// Holds NAP info for local SEO / LocalBusiness schema, the map location,
+// social links, and the Google Place ID used to pull in Google Reviews.
+// ───────────────────────────────────────────────────────────────────────
+
+model SiteSettings {
+  id             String  @id @default(cuid())
+  businessName   String  @default("Scribes Creative Solutions")
+  phone          String
+  whatsappNumber String
+  email          String
+  address        String
+  latitude       Float
+  longitude      Float
+  googlePlaceId  String?
+
+  facebookUrl  String?
+  instagramUrl String?
+  tiktokUrl    String?
+
+  lastReviewSyncAt DateTime?
+  updatedAt        DateTime  @updatedAt
+}
+
+// ───────────────────────────────────────────────────────────────────────
+// Service catalog
+// ───────────────────────────────────────────────────────────────────────
+
+model ServiceCategory {
+  id           String       @id @default(cuid())
+  name         String
+  slug         String       @unique
+  description  String
+  icon         String?
+  heroImage    String?
+  type         CategoryType @default(CREATIVE)
+  displayOrder Int          @default(0)
+
+  services       Service[]
+  portfolioItems PortfolioItem[]
+  reviews        Review[]
+  faqs           FAQ[]
+  leads          Lead[]
+  posts          Post[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Service {
-  ServiceId   String   @id @default(uuid())
-  Name        String   @unique
-  Description String?
-  Image     String?
-  CategoryId String
-  Items      String[]
-  CreatedAt DateTime @default(now())
-  UpdatedAt DateTime @updatedAt
+  id         String          @id @default(cuid())
+  categoryId String
+  category   ServiceCategory @relation(fields: [categoryId], references: [id])
 
-  //relationships
-  Category Category @relation(fields: [CategoryId], references: [CategoryId], onDelete: NoAction, onUpdate: NoAction)
-  Projects Project[]
+  name        String
+  slug        String  @unique
+  description String
+  image       String?
+
+  requirements String[]
+
+  processSteps String[]
+
+  priceFrom Float?
+  priceUnit String? // "starting from", "per hour", "per piece"
+
+  isFeatured   Boolean @default(false)
+  displayOrder Int     @default(0)
+
+  portfolioItems PortfolioItemService[]
+  reviews        Review[]
+  leads          Lead[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
-model Project {
-  ProjectId   String   @id @default(uuid())
-  Name        String
-  Description String?
-  Image     String?
-  ServiceId String?
-  CreatedAt DateTime @default(now())
-  UpdatedAt DateTime @updatedAt
-
-  //relationships
-  Service Service? @relation(fields: [ServiceId], references: [ServiceId], onDelete: NoAction, onUpdate: NoAction)
+// Homepage "How We Work" transformation flow — generic, company-wide,
+// not tied to a specific category or service.
+model ProcessStep {
+  id           String  @id @default(cuid())
+  stepNumber   Int
+  title        String
+  description  String
+  image        String?
+  displayOrder Int     @default(0)
 }
 
-model Member {
-  MemberId String @id @default(uuid())
-  Name     String
-  Role     String
-  Image    String?
-  Bio      String?
-  CreatedAt DateTime @default(now())
-  UpdatedAt DateTime @updatedAt
+// ───────────────────────────────────────────────────────────────────────
+// Portfolio / past work
+// ───────────────────────────────────────────────────────────────────────
+
+model PortfolioItem {
+  id          String  @id @default(cuid())
+  title       String
+  slug        String  @unique
+  description String?
+  clientName  String?
+
+  categoryId String?
+  category   ServiceCategory? @relation(fields: [categoryId], references: [id])
+
+  services PortfolioItemService[]
+  images   PortfolioImage[]
+
+  isFeatured   Boolean @default(false)
+  displayOrder Int     @default(0)
+
+  createdAt DateTime @default(now())
 }
+
+// Join table — lets one case study (e.g. a full business rebrand) tag every
+// service that went into it (logo, business cards, signage, ...).
+model PortfolioItemService {
+  portfolioItemId String
+  serviceId       String
+
+  portfolioItem PortfolioItem @relation(fields: [portfolioItemId], references: [id])
+  service       Service       @relation(fields: [serviceId], references: [id])
+
+  @@id([portfolioItemId, serviceId])
+}
+
+model PortfolioImage {
+  id              String        @id @default(cuid())
+  portfolioItemId String
+  portfolioItem   PortfolioItem @relation(fields: [portfolioItemId], references: [id])
+
+  url     String
+  caption String? // "Before", "After", "Final print", etc.
+  order   Int     @default(0)
+}
+
+// ───────────────────────────────────────────────────────────────────────
+// Reviews — combined Google + on-site feed
+// ───────────────────────────────────────────────────────────────────────
 
 model Review {
-  ReviewId String @id @default(uuid())
-  Name     String
-  Email    String
-  Rating   Int
-  Comment  String
-  Thumbnail String?
-  CreatedAt DateTime @default(now())
-  UpdatedAt DateTime @updatedAt
+  id     String       @id @default(cuid())
+  source ReviewSource
+
+  authorName     String
+  authorPhotoUrl String?
+  rating         Int
+  comment        String
+
+  // Reviews default to category-level (per how single-service pages
+  // fall back to category reviews when they don't have enough of their own).
+  categoryId String?
+  category   ServiceCategory? @relation(fields: [categoryId], references: [id])
+
+  serviceId String?
+  service   Service? @relation(fields: [serviceId], references: [id])
+
+  googleReviewId String?  @unique // dedupe key when syncing from the Places API
+  isApproved     Boolean  @default(true) // Google reviews auto-approved; site-submitted held for moderation
+  publishedAt    DateTime // original review date (Google) or submission date (site)
+
+  createdAt DateTime @default(now())
+}
+
+// ───────────────────────────────────────────────────────────────────────
+// FAQs, leads, blog
+// ───────────────────────────────────────────────────────────────────────
+
+model FAQ {
+  id       String @id @default(cuid())
+  question String
+  answer   String
+
+  categoryId String?
+  category   ServiceCategory? @relation(fields: [categoryId], references: [id])
+
+  displayOrder Int @default(0)
+}
+
+model Lead {
+  id      String     @id @default(cuid())
+  name    String
+  phone   String
+  email   String?
+  message String?
+  status  LeadStatus @default(NEW)
+
+  categoryId String?
+  category   ServiceCategory? @relation(fields: [categoryId], references: [id])
+
+  serviceId String?
+  service   Service? @relation(fields: [serviceId], references: [id])
+
+  createdAt DateTime @default(now())
+}
+
+model Post {
+  id         String   @id @default(cuid())
+  title      String
+  slug       String   @unique
+  excerpt    String
+  content    String
+  coverImage String?
+  tags       String[]
+
+  categoryId String?
+  category   ServiceCategory? @relation(fields: [categoryId], references: [id])
+
+  seoTitle       String?
+  seoDescription String?
+
+  publishedAt DateTime? // null = draft
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  accounts      Account[]
+  sessions      Session[]
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
 }
