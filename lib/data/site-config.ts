@@ -1,6 +1,5 @@
 import { SiteConfig } from "@/types";
 
-// TODO: replace every value below with Scribes' real details before launch.
 export const siteConfig: SiteConfig = {
   businessName: "Scribes Creative Solutions",
   tagline:

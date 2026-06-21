@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
 import { ArrowRight, Sparkles, Star } from "lucide-react";
@@ -40,104 +41,74 @@ const stats = [
   { value: "20+", label: "5-Star Reviews" },
 ];
 
+// Placeholder photography — swap each src for a real portfolio shot once you
+// have one. Captions are what carry the "what we do" message until then.
+const galleryImages = [
+  {
+    src: "https://picsum.photos/seed/scribes-brand/800/1000",
+    label: "Brand Identity",
+    className: "row-span-2",
+    priority: true,
+  },
+  {
+    src: "https://picsum.photos/seed/scribes-print/800/500",
+    label: "Large Format Print",
+    className: "",
+    priority: false,
+  },
+  {
+    src: "https://picsum.photos/seed/scribes-events/800/500",
+    label: "Events & Weddings",
+    className: "",
+    priority: false,
+  },
+];
+
 // Standalone so it can call its own reduced-motion check without prop drilling.
-function ProofCard({
-  className,
-  rotate,
-  delay,
-  children,
-}: {
-  className?: string;
-  rotate: number;
-  delay: number;
-  children: React.ReactNode;
-}) {
+function HeroGallery() {
   const shouldReduceMotion = useReducedMotion();
 
   return (
-    <motion.div
-      initial={{
-        opacity: 0,
-        y: 20,
-        rotate: shouldReduceMotion ? rotate : rotate + 6,
-      }}
-      animate={{ opacity: 1, y: 0, rotate }}
-      transition={{ duration: 0.6, delay, ease: "easeOut" }}
-      whileHover={shouldReduceMotion ? undefined : { rotate: 0, scale: 1.03 }}
-      className={cn(
-        "absolute rounded-2xl border border-brand-navy/10 bg-white shadow-xl",
-        className,
-      )}
-    >
-      {children}
-    </motion.div>
-  );
-}
+    <div className="relative hidden h-[460px] w-full lg:block">
+      <RegistrationMark className="pointer-events-none absolute -top-6 right-6 z-10 h-12 w-12 text-brand-navy/15" />
 
-// Stand-in for real work photography — three "proof of craft" mockups built
-// from the brand system itself. Swap any card's inner markup for a real
-// <Image> once portfolio photos exist; positioning stays the same.
-function ProofStack() {
-  return (
-    <div className="relative hidden h-[420px] w-full lg:block">
-      <RegistrationMark className="pointer-events-none absolute -top-6 right-10 h-14 w-14 text-brand-navy/10" />
-
-      {/* Brand identity card — back, largest */}
-      <ProofCard
-        rotate={-3}
-        delay={0.45}
-        className="left-6 top-0 h-60 w-44 overflow-hidden p-0"
-      >
-        <div className="relative flex h-full w-full flex-col items-center justify-center bg-brand-navy">
-          <span className="font-display text-7xl font-extrabold text-brand-amber">
-            S
-          </span>
-          <span className="absolute bottom-4 font-mono text-[9px] uppercase tracking-[0.15em] text-brand-paper/60">
-            Brand Identity
-          </span>
-        </div>
-      </ProofCard>
-
-      {/* Large format print swatch — top right */}
-      <ProofCard
-        rotate={5}
-        delay={0.6}
-        className="right-0 top-6 h-44 w-36 overflow-hidden p-0"
-      >
-        <div className="flex h-full w-full flex-col justify-between bg-gradient-to-br from-brand-red to-brand-amber p-4">
-          <RegistrationMark className="h-6 w-6 text-white/70" />
-          <span className="font-mono text-[9px] uppercase tracking-[0.15em] text-white/90">
-            Large Format Print
-          </span>
-        </div>
-      </ProofCard>
-
-      {/* Business card mockup — front, bottom */}
-      <ProofCard
-        rotate={-6}
-        delay={0.75}
-        className="bottom-0 left-16 h-36 w-60 p-5"
-      >
-        <div className="flex h-full flex-col justify-between">
-          <div className="flex items-center justify-between">
-            <div className="h-7 w-7 rounded-full bg-brand-navy" />
-            <span className="font-mono text-[9px] uppercase tracking-[0.15em] text-brand-slate">
-              350gsm Matt
+      <div className="grid h-full grid-cols-2 grid-rows-2 gap-3">
+        {galleryImages.map((image, i) => (
+          <motion.div
+            key={image.label}
+            initial={{ opacity: 0, y: shouldReduceMotion ? 0 : 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{
+              duration: 0.5,
+              delay: shouldReduceMotion ? 0 : 0.4 + i * 0.12,
+            }}
+            className={cn(
+              "group relative overflow-hidden rounded-2xl border border-brand-navy/10 shadow-lg",
+              image.className,
+            )}
+          >
+            <Image
+              src={image.src}
+              alt={image.label}
+              fill
+              priority={image.priority}
+              sizes="(min-width: 1024px) 320px, 100vw"
+              className="object-cover transition-transform duration-500 group-hover:scale-105"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-brand-navy/70 via-transparent to-transparent" />
+            <span className="absolute bottom-3 left-3 font-mono text-[10px] uppercase tracking-[0.15em] text-white">
+              {image.label}
             </span>
-          </div>
-          <div className="space-y-1.5">
-            <div className="h-2 w-2/3 rounded-full bg-brand-navy/80" />
-            <div className="h-1.5 w-1/2 rounded-full bg-brand-navy/25" />
-          </div>
-        </div>
-      </ProofCard>
+          </motion.div>
+        ))}
+      </div>
 
-      {/* Rating badge — floating, overlapping the stack's bottom-right corner */}
+      {/* Rating badge — floating, overlapping the gallery's bottom-right corner */}
       <motion.div
         initial={{ opacity: 0, scale: 0.85 }}
         animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.5, delay: 0.95 }}
-        className="absolute -bottom-2 right-2 flex items-center gap-1.5 rounded-full border border-brand-navy/10 bg-white px-3 py-1.5 shadow-lg"
+        transition={{ duration: 0.5, delay: 0.9 }}
+        className="absolute -bottom-4 -right-4 flex items-center gap-1.5 rounded-full border border-brand-navy/10 bg-white px-3 py-1.5 shadow-lg"
       >
         <Star className="h-3.5 w-3.5 fill-brand-amber text-brand-amber" />
         <span className="font-body text-xs font-semibold text-brand-navy">
@@ -178,7 +149,7 @@ export function Hero() {
             className="flex items-center gap-2 font-mono text-xs uppercase tracking-[0.2em] text-brand-red"
           >
             <Sparkles className="h-3.5 w-3.5" />
-            Brand · Print · Design
+            Branding · Print · Digital
           </motion.span>
 
           <motion.h1
@@ -239,7 +210,7 @@ export function Hero() {
           </motion.dl>
         </motion.div>
 
-        <ProofStack />
+        <HeroGallery />
       </div>
     </section>
   );

@@ -11,6 +11,10 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "lh3.googleusercontent.com", // Google review author photos
       },
+      {
+        protocol: "https",
+        hostname: "picsum.photos", // TODO: remove once real portfolio photography replaces hero placeholders
+      },
     ],
     formats: ["image/avif", "image/webp"],
   },
