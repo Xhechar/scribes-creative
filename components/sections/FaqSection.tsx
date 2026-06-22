@@ -4,6 +4,7 @@ import { useState } from "react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { Plus, Minus } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { siteConfig } from "@/lib/data/site-config";
 
 interface FaqItem {
   id: string;
@@ -100,7 +101,7 @@ export function FaqSection({ faqs }: { faqs: FaqItem[] }) {
               directly — we&rsquo;re quick to respond.
             </p>
             <a
-              href="https://wa.me/254700000000"
+              href={`https://wa.me/${siteConfig.whatsappNumber}`}
               target="_blank"
               rel="noopener noreferrer"
               className="mt-5 inline-flex items-center gap-2 rounded-md bg-brand-navy px-5 py-2.5 font-body text-sm font-semibold text-brand-paper transition-colors hover:bg-brand-navy/90"
