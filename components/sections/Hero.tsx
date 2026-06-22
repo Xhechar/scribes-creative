@@ -45,19 +45,19 @@ const stats = [
 // have one. Captions are what carry the "what we do" message until then.
 const galleryImages = [
   {
-    src: "https://www.pinterest.com/pin/677651075228385913/",
+    src: "https://i.pinimg.com/736x/06/cd/7c/06cd7c132ba165ab44015d6a0e408e00.jpg",
     label: "Brand Identity",
     className: "row-span-2",
     priority: true,
   },
   {
-    src: "https://www.pinterest.com/pin/736549714102812835/",
+    src: "https://i.pinimg.com/1200x/cd/a0/e3/cda0e39428984a198243cb6b2dbd310f.jpg",
     label: "Large Format Print",
     className: "",
     priority: false,
   },
   {
-    src: "https://www.pinterest.com/pin/417849671701229773/",
+    src: "https://i.pinimg.com/1200x/cf/49/c1/cf49c104b301105276ac75aac74f1cb8.jpg",
     label: "Events & Weddings",
     className: "",
     priority: false,

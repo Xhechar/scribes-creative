@@ -17,10 +17,10 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
-        hostname: "www.pinterest.com", // TODO: remove once real portfolio photography replaces hero placeholders
+        hostname: "i.pinimg.com", // TODO: remove once real portfolio photography replaces hero placeholders
       },
     ],
-    // formats: ["image/avif", "image/webp", "image/jpeg", "image/jpg", "image/png"],
+    // formats: ["image/avif", "image/webp", "image/jpg", "image/png"],
   },
   compress: true,
 };

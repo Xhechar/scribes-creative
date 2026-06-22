@@ -17,7 +17,14 @@ interface PortfolioItem {
 
 export function PortfolioPreview({ items }: { items: PortfolioItem[] }) {
   const shouldReduceMotion = useReducedMotion();
-  let images: string[] = ["https://www.pinterest.com/pin/417849671701229773/"];
+  let images: string[] = [
+    "https://i.pinimg.com/1200x/cf/46/00/cf4600a30b666ae3a3d2967fc668fa91.jpg",
+    "https://i.pinimg.com/1200x/31/0d/b4/310db44a6f9dbb771484d2bb66687211.jpg",
+    "https://i.pinimg.com/736x/a3/02/cc/a302cc95311748a29ee1a81d903b2df8.jpg",
+    "https://i.pinimg.com/1200x/30/e8/37/30e83720ea80a5d8b82ca06f016424e0.jpg",
+    "https://i.pinimg.com/736x/0f/1d/fc/0f1dfc718fd8c56a518ce07795065d90.jpg",
+    "https://i.pinimg.com/736x/fd/a7/89/fda7896cc4fb14859fcf091f8531751c.jpg",
+  ];
 
   return (
     <section className="bg-brand-paper py-20 sm:py-24">
@@ -42,8 +49,8 @@ export function PortfolioPreview({ items }: { items: PortfolioItem[] }) {
 
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {items.map((item, i) => {
-            // const coverImage = item.images[0]?.url;
-            const coverImage = images[0];
+            // const coverImage = item.images[0]?.url ?? images[i];
+            const coverImage = images[i];
 
             return (
               <motion.div
