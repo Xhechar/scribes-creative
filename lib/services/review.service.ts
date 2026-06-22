@@ -8,6 +8,14 @@ export async function getFeaturedReviews(limit = 6) {
   });
 }
 
+export async function getReviewsByCategory(categoryId: string, limit = 6) {
+  return prisma.review.findMany({
+    where: { isApproved: true, categoryId },
+    orderBy: { publishedAt: "desc" },
+    take: limit,
+  });
+}
+
 export async function getReviewStats() {
   const result = await prisma.review.aggregate({
     where: { isApproved: true },

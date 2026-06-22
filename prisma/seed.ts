@@ -4,7 +4,7 @@ import { portfolioItems } from "../lib/data/portfolio-items";
 import { services } from "../lib/data/services";
 import { reviews } from "../lib/data/reviews";
 import { faqs } from "../lib/data/faqs";
-import prisma from "../lib/prisma";
+import prisma from "@/lib/prisma";
 
 async function main() {
   console.log("Seeding service categories...");
