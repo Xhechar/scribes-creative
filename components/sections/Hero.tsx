@@ -45,19 +45,19 @@ const stats = [
 // have one. Captions are what carry the "what we do" message until then.
 const galleryImages = [
   {
-    src: "https://picsum.photos/seed/scribes-brand/800/1000",
+    src: "https://www.pinterest.com/pin/677651075228385913/",
     label: "Brand Identity",
     className: "row-span-2",
     priority: true,
   },
   {
-    src: "https://picsum.photos/seed/scribes-print/800/500",
+    src: "https://www.pinterest.com/pin/736549714102812835/",
     label: "Large Format Print",
     className: "",
     priority: false,
   },
   {
-    src: "https://picsum.photos/seed/scribes-events/800/500",
+    src: "https://www.pinterest.com/pin/417849671701229773/",
     label: "Events & Weddings",
     className: "",
     priority: false,
@@ -149,7 +149,7 @@ export function Hero() {
             className="flex items-center gap-2 font-mono text-xs uppercase tracking-[0.2em] text-brand-red"
           >
             <Sparkles className="h-3.5 w-3.5" />
-            Branding · Print · Digital
+            Brand · Print · Design
           </motion.span>
 
           <motion.h1

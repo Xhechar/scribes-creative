@@ -10,9 +10,9 @@ module.exports = {
     extend: {
       colors: {
         brand: {
-          navy: "#000259", // primary — headings, nav/footer, primary text
-          amber: "#FF9D00", // secondary accent — highlights, hover states
-          red: "#E63946", // tertiary accent — primary CTAs, registration-mark motif
+          navy: "#030028", // primary — headings, nav/footer, primary text - 000259
+          amber: "#E63946", // secondary accent — highlights, hover states - FF9D00
+          red: "#FFAE00", // tertiary accent — primary CTAs, registration-mark motif
           paper: "#F7F4EE", // background
           slate: "#5B5F73", // muted/secondary text
         },

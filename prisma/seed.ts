@@ -2,7 +2,9 @@ import { categories } from "../lib/data/categories";
 import { processSteps } from "../lib/data/process-steps";
 import { portfolioItems } from "../lib/data/portfolio-items";
 import { services } from "../lib/data/services";
-import prisma from "@/lib/prisma";
+import { reviews } from "../lib/data/reviews";
+import { faqs } from "../lib/data/faqs";
+import prisma from "../lib/prisma";
 
 async function main() {
   console.log("Seeding service categories...");
@@ -129,6 +131,58 @@ async function main() {
         },
       });
     }
+  }
+
+  console.log(
+    "Seeding reviews (placeholder — replace with real ones before launch)...",
+  );
+  for (const review of reviews) {
+    await prisma.review.upsert({
+      where: { id: review.id },
+      update: {
+        authorName: review.authorName,
+        rating: review.rating,
+        comment: review.comment,
+        source: review.source,
+        publishedAt: new Date(review.publishedAt),
+        isApproved: true,
+      },
+      create: {
+        id: review.id,
+        authorName: review.authorName,
+        rating: review.rating,
+        comment: review.comment,
+        source: review.source,
+        publishedAt: new Date(review.publishedAt),
+        isApproved: true,
+      },
+    });
+  }
+
+  console.log("Seeding FAQs...");
+  for (const faq of faqs) {
+    const category = faq.categorySlug
+      ? await prisma.serviceCategory.findUnique({
+          where: { slug: faq.categorySlug },
+        })
+      : null;
+
+    await prisma.fAQ.upsert({
+      where: { id: faq.id },
+      update: {
+        question: faq.question,
+        answer: faq.answer,
+        categoryId: category?.id ?? null,
+        displayOrder: faq.displayOrder,
+      },
+      create: {
+        id: faq.id,
+        question: faq.question,
+        answer: faq.answer,
+        categoryId: category?.id ?? null,
+        displayOrder: faq.displayOrder,
+      },
+    });
   }
 
   console.log("Seed complete.");

@@ -55,9 +55,9 @@ export function Header({ categories }: { categories: NavCategory[] }) {
           <span className="font-display text-2xl font-extrabold tracking-tight text-brand-paper">
             SCRIBES
           </span>
-          <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-brand-amber">
+          {/* <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-brand-amber">
             Creative Solutions
-          </span>
+          </span> */}
         </Link>
 
         {/* Desktop nav */}
