@@ -35,6 +35,7 @@ export default async function PortfolioItemPage({
 }: {
   params: { slug: string };
 }) {
+  console.log("params.slug: ", params.slug);
   const item = await getPortfolioItemBySlug(params.slug);
   if (!item) notFound();
 

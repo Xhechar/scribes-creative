@@ -40,6 +40,46 @@ const navLinks = [
   { label: "Contact", href: "/contact" },
 ];
 
+function RegMark({ className = "" }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 16 16"
+      className={className}
+      fill="none"
+      aria-hidden="true"
+    >
+      <circle cx="8" cy="8" r="6.5" stroke="currentColor" strokeWidth="1" />
+      <line
+        x1="8"
+        y1="1"
+        x2="8"
+        y2="15"
+        stroke="currentColor"
+        strokeWidth="1"
+      />
+      <line
+        x1="1"
+        y1="8"
+        x2="15"
+        y2="8"
+        stroke="currentColor"
+        strokeWidth="1"
+      />
+    </svg>
+  );
+}
+
+function Logo({ className }: { className?: string }) {
+  return (
+    <Link href="/" className={cn("flex items-center gap-1.5 group", className)}>
+      <RegMark className="h-4 w-4 text-brand-red transition-transform duration-300 group-hover:rotate-45" />
+      <span className="font-display text-2xl font-extrabold tracking-tight text-brand-paper">
+        SCR<span className="text-brand-amber">I</span>BES
+      </span>
+    </Link>
+  );
+}
+
 export function Header({ categories }: { categories: NavCategory[] }) {
   const [servicesOpen, setServicesOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -50,15 +90,7 @@ export function Header({ categories }: { categories: NavCategory[] }) {
   return (
     <header className="sticky top-0 z-50 bg-brand-navy">
       <div className="mx-auto flex max-w-8xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
-        {/* Logo */}
-        <Link href="/" className="flex flex-col leading-none">
-          <span className="font-display text-2xl font-extrabold tracking-tight text-brand-paper">
-            SCRIBES
-          </span>
-          {/* <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-brand-amber">
-            Creative Solutions
-          </span> */}
-        </Link>
+        <Logo />
 
         {/* Desktop nav */}
         <nav className="hidden items-center gap-8 lg:flex">
@@ -109,7 +141,6 @@ export function Header({ categories }: { categories: NavCategory[] }) {
                       );
                     })}
                   </div>
-
                   {utility.length > 0 && (
                     <div className="mt-4 border-t border-brand-navy/10 pt-4">
                       <span className="mb-2 block font-mono text-[10px] uppercase tracking-[0.15em] text-brand-slate">
@@ -205,7 +236,6 @@ export function Header({ categories }: { categories: NavCategory[] }) {
               );
             })}
           </div>
-
           <div className="mt-4 flex flex-col gap-1 border-t border-brand-paper/10 pt-4">
             {navLinks.map((link) => (
               <Link
@@ -218,7 +248,6 @@ export function Header({ categories }: { categories: NavCategory[] }) {
               </Link>
             ))}
           </div>
-
           <a
             href={`https://wa.me/${siteConfig.whatsappNumber}`}
             target="_blank"

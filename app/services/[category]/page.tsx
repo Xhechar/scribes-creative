@@ -15,11 +15,6 @@ import { FaqSection } from "@/components/sections/FaqSection";
 import { siteConfig } from "@/lib/data/site-config";
 import type { ServiceItem, PortfolioItemSummary } from "@/types";
 
-export async function generateStaticParams() {
-  const categories = await getAllCategories();
-  return categories.map((c: { slug: string }) => ({ category: c.slug }));
-}
-
 export async function generateMetadata({
   params,
 }: {

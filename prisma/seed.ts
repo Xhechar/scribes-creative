@@ -4,6 +4,7 @@ import { portfolioItems } from "../lib/data/portfolio-items";
 import { services } from "../lib/data/services";
 import { reviews } from "../lib/data/reviews";
 import { faqs } from "../lib/data/faqs";
+import { blogPosts } from "../lib/data/blog-posts";
 import prisma from "@/lib/prisma";
 
 async function main() {
@@ -181,6 +182,43 @@ async function main() {
         answer: faq.answer,
         categoryId: category?.id ?? null,
         displayOrder: faq.displayOrder,
+      },
+    });
+  }
+
+  console.log("Seeding blog posts...");
+  for (const post of blogPosts) {
+    const category = post.categorySlug
+      ? await prisma.serviceCategory.findUnique({
+          where: { slug: post.categorySlug },
+        })
+      : null;
+
+    await prisma.post.upsert({
+      where: { slug: post.slug },
+      update: {
+        title: post.title,
+        excerpt: post.excerpt,
+        content: post.content,
+        coverImage: `https://picsum.photos/seed/${post.coverImageSeed}/1200/630`,
+        tags: post.tags,
+        categoryId: category?.id ?? null,
+        seoTitle: post.seoTitle,
+        seoDescription: post.seoDescription,
+        publishedAt: new Date(post.publishedAt),
+      },
+      create: {
+        id: post.id,
+        title: post.title,
+        slug: post.slug,
+        excerpt: post.excerpt,
+        content: post.content,
+        coverImage: `https://picsum.photos/seed/${post.coverImageSeed}/1200/630`,
+        tags: post.tags,
+        categoryId: category?.id ?? null,
+        seoTitle: post.seoTitle,
+        seoDescription: post.seoDescription,
+        publishedAt: new Date(post.publishedAt),
       },
     });
   }
