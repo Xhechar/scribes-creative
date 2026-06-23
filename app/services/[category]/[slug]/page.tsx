@@ -31,9 +31,10 @@ export async function generateStaticParams() {
 export async function generateMetadata({
   params,
 }: {
-  params: { category: string; slug: string };
+  params: Promise<{ category: string; slug: string }>;
 }): Promise<Metadata> {
-  const service = await getServiceBySlug(params.slug);
+  const { slug } = await params;
+  const service = await getServiceBySlug(slug);
   if (!service) return {};
   return { title: service.name, description: service.description };
 }
@@ -41,10 +42,11 @@ export async function generateMetadata({
 export default async function ServicePage({
   params,
 }: {
-  params: { category: string; slug: string };
+  params: Promise<{ category: string; slug: string }>;
 }) {
-  const service = await getServiceBySlug(params.slug);
-  if (!service || service.category?.slug !== params.category) notFound();
+  const { category: categorySlug, slug } = await params;
+  const service = await getServiceBySlug(slug);
+  if (!service || service.category?.slug !== categorySlug) notFound();
 
   const category = service.category!;
   const reviews = (await getReviewsByCategory(category.id)) as ReviewItem[];

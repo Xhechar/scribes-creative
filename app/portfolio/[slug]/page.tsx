@@ -20,9 +20,10 @@ export async function generateStaticParams() {
 export async function generateMetadata({
   params,
 }: {
-  params: { slug: string };
-}): Promise<Metadata> {
-  const item = await getPortfolioItemBySlug(params.slug);
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug: slugValue } = await params;
+  const item = await getPortfolioItemBySlug(slugValue);
   if (!item) return {};
   return {
     title: item.title,
@@ -33,10 +34,10 @@ export async function generateMetadata({
 export default async function PortfolioItemPage({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }) {
-  console.log("params.slug: ", params.slug);
-  const item = await getPortfolioItemBySlug(params.slug);
+  const { slug: slugValue } = await params;
+  const item = await getPortfolioItemBySlug(slugValue);
   if (!item) notFound();
 
   const [cover, ...rest] = item.images as PortfolioImage[];

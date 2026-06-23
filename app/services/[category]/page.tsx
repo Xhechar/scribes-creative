@@ -15,12 +15,18 @@ import { FaqSection } from "@/components/sections/FaqSection";
 import { siteConfig } from "@/lib/data/site-config";
 import type { ServiceItem, PortfolioItemSummary } from "@/types";
 
+export async function generateStaticParams() {
+  const categories = await getAllCategories();
+  return categories.map((c: { slug: string }) => ({ category: c.slug }));
+}
+
 export async function generateMetadata({
   params,
 }: {
-  params: { category: string };
+  params: Promise<{ category: string }>;
 }): Promise<Metadata> {
-  const category = await getCategoryBySlug(params.category);
+  const { category: categorySlug } = await params;
+  const category = await getCategoryBySlug(categorySlug);
   if (!category) return {};
   return { title: category.name, description: category.description };
 }
@@ -28,13 +34,14 @@ export async function generateMetadata({
 export default async function CategoryPage({
   params,
 }: {
-  params: { category: string };
+  params: Promise<{ category: string }>;
 }) {
-  const category = await getCategoryBySlug(params.category);
+  const { category: categorySlug } = await params;
+  const category = await getCategoryBySlug(categorySlug);
   if (!category) notFound();
 
   const [services, portfolioItems, faqs] = await Promise.all([
-    getServicesByCategory(params.category),
+    getServicesByCategory(categorySlug),
     getPortfolioItemsByCategory(category.id),
     getFaqsByCategory(category.id),
   ]);
@@ -77,7 +84,7 @@ export default async function CategoryPage({
           {(services as ServiceItem[]).map((service) => (
             <Link
               key={service.id}
-              href={`/services/${params.category}/${service.slug}`}
+              href={`/services/${categorySlug}/${service.slug}`}
               className="group flex flex-col gap-3 rounded-xl border border-brand-navy/10 bg-white p-5 transition-shadow hover:shadow-md"
             >
               <div className="flex items-start justify-between gap-3">
