@@ -7,6 +7,15 @@ import { faqs } from "../lib/data/faqs";
 import { blogPosts } from "../lib/data/blog-posts";
 import prisma from "@/lib/prisma";
 
+let images: string[] = [
+  "https://i.pinimg.com/1200x/cf/46/00/cf4600a30b666ae3a3d2967fc668fa91.jpg",
+  "https://i.pinimg.com/1200x/31/0d/b4/310db44a6f9dbb771484d2bb66687211.jpg",
+  "https://i.pinimg.com/736x/a3/02/cc/a302cc95311748a29ee1a81d903b2df8.jpg",
+  "https://i.pinimg.com/1200x/30/e8/37/30e83720ea80a5d8b82ca06f016424e0.jpg",
+  "https://i.pinimg.com/736x/0f/1d/fc/0f1dfc718fd8c56a518ce07795065d90.jpg",
+  "https://i.pinimg.com/736x/fd/a7/89/fda7896cc4fb14859fcf091f8531751c.jpg",
+];
+
 async function main() {
   console.log("Seeding service categories...");
   for (const category of categories) {
@@ -89,35 +98,35 @@ async function main() {
   }
 
   console.log("Seeding portfolio items...");
-  for (const item of portfolioItems) {
+  for (let i = 0; i < portfolioItems.length; i++) {
     const category = await prisma.serviceCategory.findUnique({
-      where: { slug: item.categorySlug },
+      where: { slug: portfolioItems[i].categorySlug },
     });
 
     const portfolioItem = await prisma.portfolioItem.upsert({
-      where: { slug: item.slug },
+      where: { slug: portfolioItems[i].slug },
       update: {
-        title: item.title,
-        description: item.description,
-        clientName: item.clientName,
+        title: portfolioItems[i].title,
+        description: portfolioItems[i].description,
+        clientName: portfolioItems[i].clientName,
         categoryId: category?.id,
-        isFeatured: item.isFeatured,
-        displayOrder: item.displayOrder,
+        isFeatured: portfolioItems[i].isFeatured,
+        displayOrder: portfolioItems[i].displayOrder,
       },
       create: {
-        id: item.id,
-        title: item.title,
-        slug: item.slug,
-        description: item.description,
-        clientName: item.clientName,
+        id: portfolioItems[i].id,
+        title: portfolioItems[i].title,
+        slug: portfolioItems[i].slug,
+        description: portfolioItems[i].description,
+        clientName: portfolioItems[i].clientName,
         categoryId: category?.id,
-        isFeatured: item.isFeatured,
-        displayOrder: item.displayOrder,
+        isFeatured: portfolioItems[i].isFeatured,
+        displayOrder: portfolioItems[i].displayOrder,
       },
     });
 
-    const coverImageId = `${item.id}-cover`;
-    const coverImageUrl = `https://picsum.photos/seed/${item.coverImageSeed}/900/700`;
+    const coverImageId = `${portfolioItems[i].id}-cover`;
+    const coverImageUrl = `${images[i]}`;
     const existingCover = await prisma.portfolioImage.findFirst({
       where: { id: coverImageId },
     });
