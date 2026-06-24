@@ -32,7 +32,7 @@ export function Breadcrumb({ crumbs }: { crumbs: Crumb[] }) {
         <li>
           <Link
             href="/"
-            className="font-mono text-[11px] uppercase tracking-[0.12em] text-brand-slate hover:text-brand-navy"
+            className="font-mono text-[11px] uppercase tracking-[0.12em] text-brand-slate hover:text-brand-paper transition-colors"
           >
             Home
           </Link>
@@ -43,12 +43,12 @@ export function Breadcrumb({ crumbs }: { crumbs: Crumb[] }) {
             {crumb.href ? (
               <Link
                 href={crumb.href}
-                className="font-mono text-[11px] uppercase tracking-[0.12em] text-brand-slate hover:text-brand-navy"
+                className="font-mono text-[11px] uppercase tracking-[0.12em] text-brand-slate hover:text-brand-paper transition-colors"
               >
                 {crumb.label}
               </Link>
             ) : (
-              <span className="font-mono text-[11px] uppercase tracking-[0.12em] text-brand-navy">
+              <span className="font-mono text-[11px] uppercase tracking-[0.12em] text-brand-paper">
                 {crumb.label}
               </span>
             )}

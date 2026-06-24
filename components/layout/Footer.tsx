@@ -193,7 +193,7 @@ export async function Footer() {
       {/* Massive wordmark — decorative, sits flush at the bottom */}
       <div className="select-none overflow-hidden border-t border-brand-paper/5">
         <p
-          className="font-display font-extrabold leading-none tracking-tighter text-brand-paper/[0.07]"
+          className="font-display font-extrabold leading-none tracking-tighter text-brand-paper/[0.1] text-center"
           style={{ fontSize: "clamp(80px, 20vw, 260px)" }}
           aria-hidden="true"
         >
