@@ -1,9 +1,15 @@
-import React from 'react'
+import { getAllCategories } from "@/lib/services/category.service";
+import { BlogPostForm } from "@/components/admin/BlogPostForm";
 
-const NewBlogPage = () => {
+export default async function NewBlogPostPage() {
+  const categories = await getAllCategories();
+
   return (
-    <div>NewBlogPage</div>
-  )
+    <BlogPostForm
+      categories={categories.map((c: { id: string; name: string }) => ({
+        id: c.id,
+        name: c.name,
+      }))}
+    />
+  );
 }
-
-export default NewBlogPage;
