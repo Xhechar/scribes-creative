@@ -26,19 +26,10 @@ const sanitizeOptions: sanitizeHtml.IOptions = {
   allowedSchemes: ["https", "http"],
 };
 
-export async function GET() {
-  const session = await auth();
-  if (!session)
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-
-  const posts = await prisma.post.findMany({
-    orderBy: { createdAt: "desc" },
-    include: { category: { select: { name: true } } },
-  });
-  return NextResponse.json(posts);
-}
-
-export async function POST(req: NextRequest) {
+export async function PUT(
+  req: NextRequest,
+  { params }: { params: { id: string } },
+) {
   const session = await auth();
   if (!session)
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -57,19 +48,13 @@ export async function POST(req: NextRequest) {
     publishedAt,
   } = body;
 
-  if (!title?.trim() || !slug?.trim()) {
-    return NextResponse.json(
-      { error: "Title and slug are required." },
-      { status: 400 },
-    );
-  }
-
   const cleanContent = sanitizeHtml(content ?? "", sanitizeOptions);
 
-  const post = await prisma.post.create({
+  const post = await prisma.post.update({
+    where: { id: params.id },
     data: {
-      title: title.trim(),
-      slug: slug.trim().toLowerCase().replace(/\s+/g, "-"),
+      title: title?.trim(),
+      slug: slug?.trim().toLowerCase().replace(/\s+/g, "-"),
       excerpt: excerpt?.trim() ?? "",
       content: cleanContent,
       coverImage: coverImage?.trim() || null,
@@ -81,5 +66,17 @@ export async function POST(req: NextRequest) {
     },
   });
 
-  return NextResponse.json(post, { status: 201 });
+  return NextResponse.json(post);
+}
+
+export async function DELETE(
+  _req: NextRequest,
+  { params }: { params: { id: string } },
+) {
+  const session = await auth();
+  if (!session)
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  await prisma.post.delete({ where: { id: params.id } });
+  return NextResponse.json({ deleted: true });
 }

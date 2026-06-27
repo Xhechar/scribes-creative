@@ -1,3 +1,4 @@
+import bcrypt from "bcryptjs";
 import { categories } from "../lib/data/categories";
 import { processSteps } from "../lib/data/process-steps";
 import { portfolioItems } from "../lib/data/portfolio-items";
@@ -231,6 +232,20 @@ async function main() {
       },
     });
   }
+
+  console.log("Seeding admin user...");
+  const adminEmail = process.env.ADMIN_EMAIL ?? "admin@scribescreative.co.ke";
+  const adminPassword = process.env.ADMIN_PASSWORD ?? "change-me";
+  const hashedPassword = await bcrypt.hash(adminPassword, 12);
+  await prisma.user.upsert({
+    where: { email: adminEmail },
+    update: { password: hashedPassword },
+    create: {
+      name: "Admin",
+      email: adminEmail,
+      password: hashedPassword,
+    },
+  });
 
   console.log("Seed complete.");
 }

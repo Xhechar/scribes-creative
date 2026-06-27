@@ -4,14 +4,17 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Trash2, Loader } from "lucide-react";
 
-export function DeletePostButton({ id }: { id: string }) {
+export function DeletePortfolioButton({ id }: { id: string }) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
 
   async function handleDelete() {
-    if (!confirm("Delete this post? This cannot be undone.")) return;
+    if (
+      !confirm("Delete this project and all its images? This cannot be undone.")
+    )
+      return;
     setLoading(true);
-    await fetch(`/api/admin/blog/${id}`, { method: "DELETE" });
+    await fetch(`/api/admin/portfolio/${id}`, { method: "DELETE" });
     router.refresh();
   }
 
