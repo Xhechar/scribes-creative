@@ -1,9 +1,15 @@
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
+import { PrismaAdapter } from "@auth/prisma-adapter";
 import bcrypt from "bcryptjs";
 import prisma from "@/lib/prisma";
+import { authConfig } from "@/auth.config";
 
+// Full auth config — runs in Node.js runtime only (pages, API routes, server components).
+// Imports Prisma and bcrypt which are NOT Edge-compatible.
 export const { handlers, auth, signIn, signOut } = NextAuth({
+  ...authConfig,
+  adapter: PrismaAdapter(prisma),
   session: { strategy: "jwt" },
   providers: [
     Credentials({
@@ -26,18 +32,13 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       },
     }),
   ],
-  pages: {
-    signIn: "/admin/login",
-  },
   callbacks: {
     jwt({ token, user }) {
       if (user?.id) token.id = user.id;
       return token;
     },
     session({ session, token }) {
-      if (token.id) {
-        session.user = { ...(session.user ?? {}), id: token.id as string } as any;
-      }
+      if (token.id) session.user.id = token.id as string;
       return session;
     },
   },
