@@ -32,9 +32,10 @@ export async function generateStaticParams() {
 export async function generateMetadata({
   params,
 }: {
-  params: { category: string; slug: string };
+  params: Promise<{ category: string; slug: string }>;
 }): Promise<Metadata> {
-  const service = await getServiceBySlug(params.slug);
+  const {category: categoryParams, slug: slugParams} = await params;
+  const service = await getServiceBySlug(slugParams);
   if (!service) return {};
   return { title: service.name, description: service.description };
 }
@@ -42,10 +43,11 @@ export async function generateMetadata({
 export default async function ServicePage({
   params,
 }: {
-  params: { category: string; slug: string };
+  params: Promise<{ category: string; slug: string }>;
 }) {
-  const service = await getServiceBySlug(params.slug);
-  if (!service || service.category?.slug !== params.category) notFound();
+  const {category: categoryParams, slug: slugParams} = await params;
+  const service = await getServiceBySlug(slugParams);
+  if (!service || service.category?.slug !== categoryParams) notFound();
 
   const category = service.category!;
   const reviews = (await getReviewsByCategory(category.id)) as ReviewItem[];
@@ -63,7 +65,7 @@ export default async function ServicePage({
   const schema = serviceSchema({
     name: service.name,
     description: service.description,
-    url: `https://scribescreative.co.ke/services/${params.category}/${params.slug}`,
+    url: `https://scribescreative.co.ke/services/${categoryParams}/${slugParams}`,
     providerName: siteConfig.businessName,
   });
 

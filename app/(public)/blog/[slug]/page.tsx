@@ -17,9 +17,10 @@ export async function generateStaticParams() {
 export async function generateMetadata({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
-  const post = await getPostBySlug(params.slug);
+  const { slug: slugParams } = await params;
+  const post = await getPostBySlug(slugParams);
   if (!post) return {};
   return {
     title: (post as unknown as PostFull).seoTitle ?? post.title,
@@ -39,9 +40,10 @@ function formatDate(date: Date | null) {
 export default async function BlogPostPage({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }) {
-  const rawPost = await getPostBySlug(params.slug);
+  const { slug: slugParams } = await params;
+  const rawPost = await getPostBySlug(slugParams);
   if (!rawPost || !rawPost.publishedAt) notFound();
   const post = rawPost as unknown as PostFull;
 
