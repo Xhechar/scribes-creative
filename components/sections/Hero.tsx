@@ -102,7 +102,6 @@ function HeroGallery() {
           </motion.div>
         ))}
       </div>
-        <p>This is what we do as a company at Scribes</p>
       {/* Rating badge — floating, overlapping the gallery's bottom-right corner */}
       <motion.div
         initial={{ opacity: 0, scale: 0.85 }}
