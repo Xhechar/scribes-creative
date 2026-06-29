@@ -53,7 +53,7 @@ export async function Footer() {
             <div className="flex items-center gap-1.5">
               <RegMark className="h-4 w-4 text-brand-red" />
               <span className="font-display text-xl font-extrabold tracking-tight text-brand-paper">
-                SCR<span className="text-brand-amber">I</span>BES
+                SCRIBES
               </span>
             </div>
             <p className="mt-3 font-body text-sm text-brand-paper/70">

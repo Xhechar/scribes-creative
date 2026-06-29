@@ -5,6 +5,7 @@ import {
   Raleway,
   Inter,
   Playball,
+  Fondamento
 } from "next/font/google";
 
 export const displayFont = Inter({
@@ -21,7 +22,7 @@ export const bodyFont = Raleway({
   display: "swap",
 });
 
-export const monoFont = Playball({
+export const monoFont = Fondamento({
   subsets: ["latin"],
   weight: ["400"],
   variable: "--font-mono",

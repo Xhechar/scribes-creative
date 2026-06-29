@@ -2,57 +2,58 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Plus, Trash2, Save, Loader } from "lucide-react";
-import { ImageUpload } from "@/components/admin/ImageUpload";
+import { Save, Loader } from "lucide-react";
 
-interface Category {
-  id: string;
-  name: string;
-}
-
-interface PortfolioFormProps {
-  itemId?: string;
-  categories: Category[];
+interface CategoryFormProps {
+  categoryId?: string;
   initialData?: {
-    title: string;
+    name: string;
     slug: string;
     description: string;
-    clientName: string;
-    categoryId: string;
-    isFeatured: boolean;
+    icon: string;
+    type: string;
     displayOrder: number;
-    imageUrls: string[];
   };
 }
 
-function slugify(str: string) {
-  return str
+const ICON_OPTIONS = [
+  "Palette",
+  "Printer",
+  "Heart",
+  "Shirt",
+  "Camera",
+  "Code2",
+  "Megaphone",
+  "Landmark",
+  "BookOpen",
+  "Globe",
+  "Star",
+  "Shield",
+  "Truck",
+  "Store",
+  "Music",
+];
+
+function slugify(s: string) {
+  return s
     .toLowerCase()
     .trim()
     .replace(/[^a-z0-9\s-]/g, "")
     .replace(/\s+/g, "-");
 }
 
-export function PortfolioForm({
-  itemId,
-  categories,
-  initialData,
-}: PortfolioFormProps) {
+export function CategoryForm({ categoryId, initialData }: CategoryFormProps) {
   const router = useRouter();
-  const isEditing = Boolean(itemId);
+  const isEditing = Boolean(categoryId);
 
   const [form, setForm] = useState({
-    title: initialData?.title ?? "",
+    name: initialData?.name ?? "",
     slug: initialData?.slug ?? "",
     description: initialData?.description ?? "",
-    clientName: initialData?.clientName ?? "",
-    categoryId: initialData?.categoryId ?? "",
-    isFeatured: initialData?.isFeatured ?? false,
+    icon: initialData?.icon ?? "Palette",
+    type: initialData?.type ?? "CREATIVE",
     displayOrder: initialData?.displayOrder ?? 0,
   });
-  const [imageUrls, setImageUrls] = useState<string[]>(
-    initialData?.imageUrls?.length ? initialData.imageUrls : [""],
-  );
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
@@ -61,14 +62,10 @@ export function PortfolioForm({
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
     >,
   ) {
-    const { name, value, type } = e.target;
+    const { name, value } = e.target;
     setForm((prev) => {
-      const next = {
-        ...prev,
-        [name]:
-          type === "checkbox" ? (e.target as HTMLInputElement).checked : value,
-      };
-      if (name === "title" && !isEditing) next.slug = slugify(value);
+      const next = { ...prev, [name]: value };
+      if (name === "name" && !isEditing) next.slug = slugify(value);
       return next;
     });
   }
@@ -79,21 +76,24 @@ export function PortfolioForm({
     setError("");
 
     const url = isEditing
-      ? `/api/admin/portfolio/${itemId}`
-      : "/api/admin/portfolio";
+      ? `/api/admin/categories/${categoryId}`
+      : "/api/admin/categories";
     const method = isEditing ? "PUT" : "POST";
 
     try {
       const res = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, imageUrls: imageUrls.filter(Boolean) }),
+        body: JSON.stringify({
+          ...form,
+          displayOrder: Number(form.displayOrder),
+        }),
       });
       if (!res.ok) {
         const d = await res.json();
-        throw new Error(d.error ?? "Failed to save.");
+        throw new Error(d.error ?? "Failed to save");
       }
-      router.push("/admin/portfolio");
+      router.push("/admin/categories");
       router.refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong.");
@@ -103,9 +103,9 @@ export function PortfolioForm({
   }
 
   return (
-    <div className="mx-auto max-w-3xl">
+    <div className="mx-auto max-w-2xl">
       <h1 className="mb-6 font-display text-2xl font-bold text-brand-navy">
-        {isEditing ? "Edit Portfolio Item" : "Add Portfolio Item"}
+        {isEditing ? "Edit Category" : "New Category"}
       </h1>
 
       {error && (
@@ -121,12 +121,12 @@ export function PortfolioForm({
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
           <div className="flex flex-col gap-1.5">
             <label className="font-mono text-[10px] uppercase tracking-[0.15em] text-brand-slate">
-              Title *
+              Name *
             </label>
             <input
-              name="title"
+              name="name"
               required
-              value={form.title}
+              value={form.name}
               onChange={handleChange}
               className="rounded-lg border border-brand-navy/20 px-3.5 py-2.5 font-body text-sm text-brand-navy focus:border-brand-navy focus:outline-none"
             />
@@ -151,46 +151,45 @@ export function PortfolioForm({
           </label>
           <textarea
             name="description"
-            rows={3}
+            rows={2}
             value={form.description}
             onChange={handleChange}
             className="resize-none rounded-lg border border-brand-navy/20 px-3.5 py-2.5 font-body text-sm text-brand-navy focus:border-brand-navy focus:outline-none"
           />
         </div>
 
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
           <div className="flex flex-col gap-1.5">
             <label className="font-mono text-[10px] uppercase tracking-[0.15em] text-brand-slate">
-              Client Name
-            </label>
-            <input
-              name="clientName"
-              value={form.clientName}
-              onChange={handleChange}
-              className="rounded-lg border border-brand-navy/20 px-3.5 py-2.5 font-body text-sm text-brand-navy focus:border-brand-navy focus:outline-none"
-            />
-          </div>
-          <div className="flex flex-col gap-1.5">
-            <label className="font-mono text-[10px] uppercase tracking-[0.15em] text-brand-slate">
-              Category
+              Icon (Lucide)
             </label>
             <select
-              name="categoryId"
-              value={form.categoryId}
+              name="icon"
+              value={form.icon}
               onChange={handleChange}
               className="rounded-lg border border-brand-navy/20 px-3.5 py-2.5 font-body text-sm text-brand-navy focus:border-brand-navy focus:outline-none"
             >
-              <option value="">None</option>
-              {categories.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.name}
+              {ICON_OPTIONS.map((i) => (
+                <option key={i} value={i}>
+                  {i}
                 </option>
               ))}
             </select>
           </div>
-        </div>
-
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+          <div className="flex flex-col gap-1.5">
+            <label className="font-mono text-[10px] uppercase tracking-[0.15em] text-brand-slate">
+              Type
+            </label>
+            <select
+              name="type"
+              value={form.type}
+              onChange={handleChange}
+              className="rounded-lg border border-brand-navy/20 px-3.5 py-2.5 font-body text-sm text-brand-navy focus:border-brand-navy focus:outline-none"
+            >
+              <option value="CREATIVE">Creative (portfolio-driven)</option>
+              <option value="UTILITY">Utility (walk-in / document)</option>
+            </select>
+          </div>
           <div className="flex flex-col gap-1.5">
             <label className="font-mono text-[10px] uppercase tracking-[0.15em] text-brand-slate">
               Display Order
@@ -203,67 +202,12 @@ export function PortfolioForm({
               className="rounded-lg border border-brand-navy/20 px-3.5 py-2.5 font-body text-sm text-brand-navy focus:border-brand-navy focus:outline-none"
             />
           </div>
-          <div className="flex items-center gap-3 pt-5">
-            <input
-              id="isFeatured"
-              name="isFeatured"
-              type="checkbox"
-              checked={form.isFeatured}
-              onChange={handleChange}
-              className="h-4 w-4 rounded border-brand-navy/30 accent-brand-red"
-            />
-            <label
-              htmlFor="isFeatured"
-              className="font-body text-sm text-brand-navy"
-            >
-              Feature on homepage
-            </label>
-          </div>
-        </div>
-
-        {/* Images — each slot is an ImageUpload */}
-        <div className="flex flex-col gap-3">
-          <label className="font-mono text-[10px] uppercase tracking-[0.15em] text-brand-slate">
-            Images (first is cover)
-          </label>
-          {imageUrls.map((url, idx) => (
-            <div key={idx} className="relative">
-              <ImageUpload
-                label={idx === 0 ? "Cover image" : `Image ${idx + 1}`}
-                value={url}
-                onChange={(newUrl) =>
-                  setImageUrls((prev) =>
-                    prev.map((u, i) => (i === idx ? newUrl : u)),
-                  )
-                }
-                aspectRatio="video"
-              />
-              {imageUrls.length > 1 && (
-                <button
-                  type="button"
-                  onClick={() =>
-                    setImageUrls((prev) => prev.filter((_, i) => i !== idx))
-                  }
-                  className="absolute right-0 top-0 flex items-center gap-1 rounded-md border border-brand-navy/10 bg-white px-2 py-1 font-body text-xs text-brand-slate hover:text-brand-red"
-                >
-                  <Trash2 className="h-3 w-3" /> Remove
-                </button>
-              )}
-            </div>
-          ))}
-          <button
-            type="button"
-            onClick={() => setImageUrls((prev) => [...prev, ""])}
-            className="flex items-center gap-1.5 self-start font-body text-sm font-medium text-brand-navy hover:text-brand-red"
-          >
-            <Plus className="h-4 w-4" /> Add another image
-          </button>
         </div>
 
         <div className="flex items-center justify-end gap-3 border-t border-brand-navy/10 pt-4">
           <button
             type="button"
-            onClick={() => router.push("/admin/portfolio")}
+            onClick={() => router.push("/admin/categories")}
             className="rounded-md border border-brand-navy/20 px-4 py-2 font-body text-sm text-brand-navy hover:bg-brand-navy/5"
           >
             Cancel
@@ -278,7 +222,7 @@ export function PortfolioForm({
             ) : (
               <Save className="h-4 w-4" />
             )}
-            {saving ? "Saving…" : "Save"}
+            {saving ? "Saving…" : "Save Category"}
           </button>
         </div>
       </form>

@@ -6,11 +6,11 @@ import "./globals.css";
 export const metadata: Metadata = {
   metadataBase: new URL("https://scribescreative.co.ke"),
   title: {
-    default: `${siteConfig.businessName} | Branding, Print & Web Design in Nairobi`,
+    default: `${siteConfig.businessName} | Branding, Print & Web Design in Eldoret`,
     template: `%s | ${siteConfig.businessName}`,
   },
   description:
-    "Scribes Creative Solutions designs, prints, and builds the brand identity that makes Nairobi businesses look the part — branding, large format printing, photography, web development, and more.",
+    "Scribes Creative Solutions designs, prints, and builds the brand identity that makes businesses look the part — branding, large format printing, photography, web development, and more.",
   openGraph: {
     type: "website",
     locale: "en_KE",

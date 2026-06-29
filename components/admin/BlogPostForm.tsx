@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { TipTapEditor } from "@/components/admin/TipTapEditor";
+import { ImageUpload } from "@/components/admin/ImageUpload";
 import { Save, Eye, Loader } from "lucide-react";
 
 interface Category {
@@ -55,7 +56,6 @@ export function BlogPostForm({
     seoDescription: initialData?.seoDescription ?? "",
     publishedAt: initialData?.publishedAt ?? "",
   });
-
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
@@ -67,9 +67,7 @@ export function BlogPostForm({
     const { name, value } = e.target;
     setForm((prev) => {
       const next = { ...prev, [name]: value };
-      if (name === "title" && !isEditing) {
-        next.slug = slugify(value);
-      }
+      if (name === "title" && !isEditing) next.slug = slugify(value);
       return next;
     });
   }
@@ -77,7 +75,6 @@ export function BlogPostForm({
   async function save(publish: boolean) {
     setSaving(true);
     setError("");
-
     const payload = {
       ...form,
       tags: form.tags
@@ -88,22 +85,18 @@ export function BlogPostForm({
         ? new Date().toISOString()
         : form.publishedAt || null,
     };
-
     const url = isEditing ? `/api/admin/blog/${postId}` : "/api/admin/blog";
     const method = isEditing ? "PUT" : "POST";
-
     try {
       const res = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
-
       if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.error ?? "Failed to save post.");
+        const d = await res.json();
+        throw new Error(d.error ?? "Failed to save.");
       }
-
       router.push("/admin/blog");
       router.refresh();
     } catch (err) {
@@ -138,14 +131,14 @@ export function BlogPostForm({
             className="flex items-center gap-1.5 rounded-md border border-brand-navy/20 px-4 py-2 font-body text-sm font-medium text-brand-navy hover:bg-brand-navy/5 disabled:opacity-60"
           >
             <Save className="h-4 w-4" />
-            {saving ? "Saving..." : "Save Draft"}
+            {saving ? "Saving…" : "Save Draft"}
           </button>
           <button
             onClick={() => save(true)}
             disabled={saving}
             className="flex items-center gap-1.5 rounded-md bg-brand-red px-4 py-2 font-body text-sm font-semibold text-brand-paper hover:bg-brand-red/90 disabled:opacity-60"
           >
-            {saving ? <Loader className="h-4 w-4 animate-spin" /> : null}
+            {saving && <Loader className="h-4 w-4 animate-spin" />}
             {isPublished ? "Update & Publish" : "Publish"}
           </button>
         </div>
@@ -158,9 +151,8 @@ export function BlogPostForm({
       )}
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_280px]">
-        {/* Main content column */}
+        {/* Main */}
         <div className="flex flex-col gap-5">
-          {/* Title */}
           <div className="flex flex-col gap-1.5">
             <label className="font-mono text-[10px] uppercase tracking-[0.15em] text-brand-slate">
               Title *
@@ -169,27 +161,23 @@ export function BlogPostForm({
               name="title"
               value={form.title}
               onChange={handleChange}
-              placeholder="5 Signs Your Business Needs a Rebrand"
+              placeholder="e.g. 5 Signs Your Business Needs a Rebrand"
               className="rounded-lg border border-brand-navy/20 px-4 py-2.5 font-display text-lg font-bold text-brand-navy placeholder:font-body placeholder:text-base placeholder:font-normal placeholder:text-brand-navy/30 focus:border-brand-navy focus:outline-none"
             />
           </div>
-
-          {/* Excerpt */}
           <div className="flex flex-col gap-1.5">
             <label className="font-mono text-[10px] uppercase tracking-[0.15em] text-brand-slate">
-              Excerpt (shown in listings)
+              Excerpt
             </label>
             <textarea
               name="excerpt"
               value={form.excerpt}
               onChange={handleChange}
               rows={2}
-              placeholder="A short summary that appears in the blog listing and search results..."
+              placeholder="Short summary shown in listings..."
               className="resize-none rounded-lg border border-brand-navy/20 px-4 py-2.5 font-body text-sm text-brand-navy placeholder:text-brand-navy/30 focus:border-brand-navy focus:outline-none"
             />
           </div>
-
-          {/* TipTap editor */}
           <div className="flex flex-col gap-1.5">
             <label className="font-mono text-[10px] uppercase tracking-[0.15em] text-brand-slate">
               Content *
@@ -199,14 +187,13 @@ export function BlogPostForm({
               onChange={(html) =>
                 setForm((prev) => ({ ...prev, content: html }))
               }
-              placeholder="Start writing your post..."
+              placeholder="Start writing your post…"
             />
           </div>
         </div>
 
         {/* Sidebar */}
         <div className="flex flex-col gap-5">
-          {/* Publish status */}
           <div className="rounded-lg border border-brand-navy/10 bg-white p-4">
             <p className="font-mono text-[10px] uppercase tracking-[0.15em] text-brand-slate">
               Status
@@ -220,7 +207,6 @@ export function BlogPostForm({
             </p>
           </div>
 
-          {/* Slug */}
           <div className="flex flex-col gap-1.5">
             <label className="font-mono text-[10px] uppercase tracking-[0.15em] text-brand-slate">
               URL Slug
@@ -229,29 +215,20 @@ export function BlogPostForm({
               name="slug"
               value={form.slug}
               onChange={handleChange}
-              placeholder="auto-generated-from-title"
               className="rounded-lg border border-brand-navy/20 px-3 py-2 font-mono text-xs text-brand-navy focus:border-brand-navy focus:outline-none"
             />
             <span className="font-mono text-[9px] text-brand-slate">
-              /blog/{form.slug || "..."}
+              /blog/{form.slug || "…"}
             </span>
           </div>
 
-          {/* Cover image URL */}
-          <div className="flex flex-col gap-1.5">
-            <label className="font-mono text-[10px] uppercase tracking-[0.15em] text-brand-slate">
-              Cover Image URL
-            </label>
-            <input
-              name="coverImage"
-              value={form.coverImage}
-              onChange={handleChange}
-              placeholder="https://res.cloudinary.com/..."
-              className="rounded-lg border border-brand-navy/20 px-3 py-2 font-body text-xs text-brand-navy placeholder:text-brand-navy/30 focus:border-brand-navy focus:outline-none"
-            />
-          </div>
+          <ImageUpload
+            label="Cover Image"
+            value={form.coverImage}
+            onChange={(url) => setForm((p) => ({ ...p, coverImage: url }))}
+            aspectRatio="video"
+          />
 
-          {/* Tags */}
           <div className="flex flex-col gap-1.5">
             <label className="font-mono text-[10px] uppercase tracking-[0.15em] text-brand-slate">
               Tags (comma-separated)
@@ -260,15 +237,14 @@ export function BlogPostForm({
               name="tags"
               value={form.tags}
               onChange={handleChange}
-              placeholder="Branding, Print, Business Tips"
+              placeholder="Branding, Print, Tips"
               className="rounded-lg border border-brand-navy/20 px-3 py-2 font-body text-sm text-brand-navy placeholder:text-brand-navy/30 focus:border-brand-navy focus:outline-none"
             />
           </div>
 
-          {/* Category */}
           <div className="flex flex-col gap-1.5">
             <label className="font-mono text-[10px] uppercase tracking-[0.15em] text-brand-slate">
-              Related Service Category
+              Related Category
             </label>
             <select
               name="categoryId"
@@ -285,7 +261,6 @@ export function BlogPostForm({
             </select>
           </div>
 
-          {/* SEO */}
           <div className="rounded-lg border border-brand-navy/10 bg-white p-4">
             <p className="mb-3 font-mono text-[10px] uppercase tracking-[0.15em] text-brand-slate">
               SEO

@@ -102,7 +102,7 @@ function HeroGallery() {
           </motion.div>
         ))}
       </div>
-
+        <p>This is what we do as a company at Scribes</p>
       {/* Rating badge — floating, overlapping the gallery's bottom-right corner */}
       <motion.div
         initial={{ opacity: 0, scale: 0.85 }}
@@ -112,7 +112,7 @@ function HeroGallery() {
       >
         <Star className="h-3.5 w-3.5 fill-brand-amber text-brand-amber" />
         <span className="font-body text-xs font-semibold text-brand-navy">
-          4.9
+          5.0
         </span>
         <span className="font-mono text-[9px] uppercase tracking-wide text-brand-slate">
           20+ reviews

@@ -42,7 +42,7 @@ export function localBusinessSchema({
     email,
     address: {
       "@type": "PostalAddress",
-      addressLocality: "Nairobi",
+      addressLocality: "Eldoret",
       addressCountry: "KE",
       streetAddress: address,
     },
@@ -95,7 +95,7 @@ export function serviceSchema({
     },
     areaServed: {
       "@type": "City",
-      name: "Nairobi",
+      name: "Eldoret",
     },
   };
 }

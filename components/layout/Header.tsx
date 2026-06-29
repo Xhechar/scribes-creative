@@ -74,7 +74,7 @@ function Logo({ className }: { className?: string }) {
     <Link href="/" className={cn("flex items-center gap-1.5 group", className)}>
       <RegMark className="h-4 w-4 text-brand-red transition-transform duration-300 group-hover:rotate-45" />
       <span className="font-display text-2xl font-extrabold tracking-tight text-brand-paper">
-        SCR<span className="text-brand-amber">I</span>BES
+        SCRIBES
       </span>
     </Link>
   );

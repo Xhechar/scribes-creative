@@ -12,6 +12,9 @@ import {
   Briefcase,
   HelpCircle,
   LogOut,
+  Layers,
+  List,
+  X,
   type LucideIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -55,9 +58,11 @@ function RegMark({ className = "" }: { className?: string }) {
 export function AdminSidebar({
   newLeads = 0,
   pendingReviews = 0,
+  onClose,
 }: {
   newLeads?: number;
   pendingReviews?: number;
+  onClose?: () => void;
 }) {
   const pathname = usePathname();
 
@@ -77,13 +82,14 @@ export function AdminSidebar({
     },
     { label: "Blog", href: "/admin/blog", icon: FileText },
     { label: "Portfolio", href: "/admin/portfolio", icon: ImageIcon },
+    { label: "Categories", href: "/admin/categories", icon: Layers },
     { label: "Services", href: "/admin/services", icon: Briefcase },
     { label: "FAQs", href: "/admin/faqs", icon: HelpCircle },
   ];
 
   return (
     <aside className="flex h-screen w-56 flex-col bg-brand-navy text-brand-paper">
-      {/* Logo */}
+      {/* Logo + mobile close */}
       <div className="flex items-center gap-1.5 border-b border-brand-paper/10 px-5 py-4">
         <RegMark className="h-4 w-4 text-brand-red" />
         <span className="font-display text-lg font-extrabold tracking-tight">
@@ -92,6 +98,15 @@ export function AdminSidebar({
         <span className="ml-auto font-mono text-[9px] uppercase tracking-wider text-brand-paper/40">
           Admin
         </span>
+        {onClose && (
+          <button
+            onClick={onClose}
+            className="ml-2 rounded p-0.5 text-brand-paper/50 hover:text-brand-paper lg:hidden"
+            aria-label="Close menu"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        )}
       </div>
 
       {/* Nav */}
@@ -106,6 +121,7 @@ export function AdminSidebar({
               <li key={item.href}>
                 <Link
                   href={item.href}
+                  onClick={onClose}
                   className={cn(
                     "flex items-center gap-3 rounded-md px-3 py-2 font-body text-sm font-medium transition-colors",
                     isActive

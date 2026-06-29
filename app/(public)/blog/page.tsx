@@ -8,7 +8,7 @@ import type { PostSummary } from "@/types";
 export const metadata: Metadata = {
   title: "Blog",
   description:
-    "Branding tips, print guides, and business advice from Scribes Creative Solutions in Nairobi.",
+    "Branding tips, print guides, and business advice from Scribes Creative Solutions in Eldoret.",
 };
 
 function formatDate(date: Date | null) {

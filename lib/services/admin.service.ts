@@ -3,12 +3,13 @@ import prisma from "@/lib/prisma";
 // ── Dashboard ──────────────────────────────────────────────────────────────
 
 export async function getDashboardStats() {
-  const [newLeads, pendingReviews, publishedPosts, portfolioCount] = await Promise.all([
-    prisma.lead.count({ where: { status: "NEW" } }),
-    prisma.review.count({ where: { isApproved: false } }),
-    prisma.post.count({ where: { publishedAt: { not: null } } }),
-    prisma.portfolioItem.count(),
-  ]);
+  const [newLeads, pendingReviews, publishedPosts, portfolioCount] =
+    await Promise.all([
+      prisma.lead.count({ where: { status: "NEW" } }),
+      prisma.review.count({ where: { isApproved: false } }),
+      prisma.post.count({ where: { publishedAt: { not: null } } }),
+      prisma.portfolioItem.count(),
+    ]);
   return { newLeads, pendingReviews, publishedPosts, portfolioCount };
 }
 
@@ -29,7 +30,10 @@ export async function getAllLeads() {
 }
 
 export async function updateLeadStatus(id: string, status: string) {
-  return prisma.lead.update({ where: { id }, data: { status: status as "NEW" | "CONTACTED" | "CONVERTED" | "CLOSED" } });
+  return prisma.lead.update({
+    where: { id },
+    data: { status: status as "NEW" | "CONTACTED" | "CONVERTED" | "CLOSED" },
+  });
 }
 
 // ── Reviews ────────────────────────────────────────────────────────────────
@@ -110,5 +114,53 @@ export async function getAllFaqsAdmin() {
   return prisma.fAQ.findMany({
     orderBy: [{ categoryId: "asc" }, { displayOrder: "asc" }],
     include: { category: { select: { name: true } } },
+  });
+}
+
+// ── Dashboard extras ────────────────────────────────────────────────────────
+
+export async function getRecentBlogPosts(limit = 4) {
+  return prisma.post.findMany({
+    orderBy: { createdAt: "desc" },
+    take: limit,
+    select: {
+      id: true,
+      title: true,
+      slug: true,
+      publishedAt: true,
+      coverImage: true,
+    },
+  });
+}
+
+export async function getRecentPortfolioItems(limit = 4) {
+  return prisma.portfolioItem.findMany({
+    orderBy: { createdAt: "desc" },
+    take: limit,
+    include: {
+      images: { orderBy: { order: "asc" }, take: 1 },
+    },
+  });
+}
+
+// ── Categories ─────────────────────────────────────────────────────────────
+
+export async function getAllCategoriesAdmin() {
+  return prisma.serviceCategory.findMany({
+    orderBy: { displayOrder: "asc" },
+    include: { _count: { select: { services: true } } },
+  });
+}
+
+export async function getCategoryAdmin(id: string) {
+  return prisma.serviceCategory.findUnique({ where: { id } });
+}
+
+// ── Services (full CRUD) ────────────────────────────────────────────────────
+
+export async function getServiceAdmin(id: string) {
+  return prisma.service.findUnique({
+    where: { id },
+    include: { category: { select: { name: true, slug: true } } },
   });
 }

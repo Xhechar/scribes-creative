@@ -6,10 +6,11 @@ import { BlogPostForm } from "@/components/admin/BlogPostForm";
 export default async function EditBlogPostPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
+  const { id: paramsId } = await params;
   const [post, categories] = await Promise.all([
-    getPostByIdAdmin(params.id),
+    getPostByIdAdmin(paramsId),
     getAllCategories(),
   ]);
 

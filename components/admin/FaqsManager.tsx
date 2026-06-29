@@ -17,6 +17,128 @@ interface Category {
   name: string;
 }
 
+interface FormState {
+  question: string;
+  answer: string;
+  categoryId: string;
+  displayOrder: number;
+}
+
+// ── Defined OUTSIDE FaqsManager so React keeps the same component instance
+// between renders. Defining it inside would cause a full remount (and lost
+// focus) on every keystroke because React sees a new component type each time.
+function FaqEditForm({
+  form,
+  categories,
+  saving,
+  onChange,
+  onSave,
+  onCancel,
+}: {
+  form: FormState;
+  categories: Category[];
+  saving: boolean;
+  onChange: (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >,
+  ) => void;
+  onSave: () => void;
+  onCancel: () => void;
+}) {
+  return (
+    <div className="flex flex-col gap-3 rounded-lg border border-brand-navy/20 bg-brand-paper/50 p-4">
+      <div className="flex flex-col gap-1.5">
+        <label className="font-mono text-[10px] uppercase tracking-[0.12em] text-brand-slate">
+          Question *
+        </label>
+        <input
+          name="question"
+          value={form.question}
+          onChange={onChange}
+          autoFocus
+          className="rounded-md border border-brand-navy/20 px-3 py-2 font-body text-sm text-brand-navy focus:border-brand-navy focus:outline-none"
+        />
+      </div>
+      <div className="flex flex-col gap-1.5">
+        <label className="font-mono text-[10px] uppercase tracking-[0.12em] text-brand-slate">
+          Answer *
+        </label>
+        <textarea
+          name="answer"
+          rows={4}
+          value={form.answer}
+          onChange={onChange}
+          className="resize-none rounded-md border border-brand-navy/20 px-3 py-2 font-body text-sm text-brand-navy focus:border-brand-navy focus:outline-none"
+        />
+      </div>
+      <div className="grid grid-cols-2 gap-3">
+        <div className="flex flex-col gap-1.5">
+          <label className="font-mono text-[10px] uppercase tracking-[0.12em] text-brand-slate">
+            Category (optional)
+          </label>
+          <select
+            name="categoryId"
+            value={form.categoryId}
+            onChange={onChange}
+            className="rounded-md border border-brand-navy/20 px-3 py-2 font-body text-sm text-brand-navy focus:border-brand-navy focus:outline-none"
+          >
+            <option value="">General (site-wide)</option>
+            {categories.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.name}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="flex flex-col gap-1.5">
+          <label className="font-mono text-[10px] uppercase tracking-[0.12em] text-brand-slate">
+            Display Order
+          </label>
+          <input
+            name="displayOrder"
+            type="number"
+            value={form.displayOrder}
+            onChange={onChange}
+            className="rounded-md border border-brand-navy/20 px-3 py-2 font-body text-sm text-brand-navy focus:border-brand-navy focus:outline-none"
+          />
+        </div>
+      </div>
+      <div className="flex items-center justify-end gap-2">
+        <button
+          type="button"
+          onClick={onCancel}
+          className="flex items-center gap-1.5 rounded-md border border-brand-navy/20 px-3 py-1.5 font-body text-sm text-brand-navy hover:bg-brand-navy/5"
+        >
+          <X className="h-3.5 w-3.5" /> Cancel
+        </button>
+        <button
+          type="button"
+          onClick={onSave}
+          disabled={saving}
+          className="flex items-center gap-1.5 rounded-md bg-brand-red px-3 py-1.5 font-body text-sm font-semibold text-brand-paper hover:bg-brand-red/90 disabled:opacity-60"
+        >
+          {saving ? (
+            <Loader className="h-3.5 w-3.5 animate-spin" />
+          ) : (
+            <Save className="h-3.5 w-3.5" />
+          )}
+          Save
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// ── Main component ──────────────────────────────────────────────────────────
+
+const emptyForm: FormState = {
+  question: "",
+  answer: "",
+  categoryId: "",
+  displayOrder: 0,
+};
+
 export function FaqsManager({
   initialFaqs,
   categories,
@@ -27,14 +149,7 @@ export function FaqsManager({
   const [faqs, setFaqs] = useState<FaqItem[]>(initialFaqs);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [adding, setAdding] = useState(false);
-
-  const emptyForm = {
-    question: "",
-    answer: "",
-    categoryId: "",
-    displayOrder: 0,
-  };
-  const [form, setForm] = useState(emptyForm);
+  const [form, setForm] = useState<FormState>(emptyForm);
   const [saving, setSaving] = useState(false);
 
   function handleFormChange(
@@ -42,7 +157,11 @@ export function FaqsManager({
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
     >,
   ) {
-    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    const { name, value } = e.target;
+    setForm((prev) => ({
+      ...prev,
+      [name]: name === "displayOrder" ? Number(value) : value,
+    }));
   }
 
   function startEdit(faq: FaqItem) {
@@ -56,7 +175,13 @@ export function FaqsManager({
     });
   }
 
-  function cancelEdit() {
+  function startAdd() {
+    setEditingId(null);
+    setAdding(true);
+    setForm(emptyForm);
+  }
+
+  function cancel() {
     setEditingId(null);
     setAdding(false);
     setForm(emptyForm);
@@ -77,7 +202,7 @@ export function FaqsManager({
         ...prev,
         { ...newFaq, category: cat ? { name: cat.name } : null },
       ]);
-      cancelEdit();
+      cancel();
     }
     setSaving(false);
   }
@@ -103,7 +228,7 @@ export function FaqsManager({
             : f,
         ),
       );
-      cancelEdit();
+      cancel();
     }
     setSaving(false);
   }
@@ -114,86 +239,6 @@ export function FaqsManager({
     if (res.ok) setFaqs((prev) => prev.filter((f) => f.id !== id));
   }
 
-  const EditForm = ({ onSave }: { onSave: () => void }) => (
-    <div className="flex flex-col gap-3 rounded-lg border border-brand-navy/20 bg-brand-paper/50 p-4">
-      <div className="flex flex-col gap-1.5">
-        <label className="font-mono text-[10px] uppercase tracking-[0.12em] text-brand-slate">
-          Question *
-        </label>
-        <input
-          name="question"
-          value={form.question}
-          onChange={handleFormChange}
-          className="rounded-md border border-brand-navy/20 px-3 py-2 font-body text-sm text-brand-navy focus:border-brand-navy focus:outline-none"
-        />
-      </div>
-      <div className="flex flex-col gap-1.5">
-        <label className="font-mono text-[10px] uppercase tracking-[0.12em] text-brand-slate">
-          Answer *
-        </label>
-        <textarea
-          name="answer"
-          rows={4}
-          value={form.answer}
-          onChange={handleFormChange}
-          className="resize-none rounded-md border border-brand-navy/20 px-3 py-2 font-body text-sm text-brand-navy focus:border-brand-navy focus:outline-none"
-        />
-      </div>
-      <div className="grid grid-cols-2 gap-3">
-        <div className="flex flex-col gap-1.5">
-          <label className="font-mono text-[10px] uppercase tracking-[0.12em] text-brand-slate">
-            Category (optional)
-          </label>
-          <select
-            name="categoryId"
-            value={form.categoryId}
-            onChange={handleFormChange}
-            className="rounded-md border border-brand-navy/20 px-3 py-2 font-body text-sm text-brand-navy focus:border-brand-navy focus:outline-none"
-          >
-            <option value="">General (site-wide)</option>
-            {categories.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.name}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div className="flex flex-col gap-1.5">
-          <label className="font-mono text-[10px] uppercase tracking-[0.12em] text-brand-slate">
-            Display Order
-          </label>
-          <input
-            name="displayOrder"
-            type="number"
-            value={form.displayOrder}
-            onChange={handleFormChange}
-            className="rounded-md border border-brand-navy/20 px-3 py-2 font-body text-sm text-brand-navy focus:border-brand-navy focus:outline-none"
-          />
-        </div>
-      </div>
-      <div className="flex items-center justify-end gap-2">
-        <button
-          onClick={cancelEdit}
-          className="flex items-center gap-1.5 rounded-md border border-brand-navy/20 px-3 py-1.5 font-body text-sm text-brand-navy hover:bg-brand-navy/5"
-        >
-          <X className="h-3.5 w-3.5" /> Cancel
-        </button>
-        <button
-          onClick={onSave}
-          disabled={saving}
-          className="flex items-center gap-1.5 rounded-md bg-brand-red px-3 py-1.5 font-body text-sm font-semibold text-brand-paper hover:bg-brand-red/90 disabled:opacity-60"
-        >
-          {saving ? (
-            <Loader className="h-3.5 w-3.5 animate-spin" />
-          ) : (
-            <Save className="h-3.5 w-3.5" />
-          )}
-          Save
-        </button>
-      </div>
-    </div>
-  );
-
   return (
     <div className="flex flex-col gap-3">
       {faqs.map((faq) => (
@@ -203,11 +248,18 @@ export function FaqsManager({
         >
           {editingId === faq.id ? (
             <div className="p-4">
-              <EditForm onSave={() => saveEdit(faq.id)} />
+              <FaqEditForm
+                form={form}
+                categories={categories}
+                saving={saving}
+                onChange={handleFormChange}
+                onSave={() => saveEdit(faq.id)}
+                onCancel={cancel}
+              />
             </div>
           ) : (
             <div className="flex items-start gap-3 p-4">
-              <div className="flex-1">
+              <div className="flex-1 min-w-0">
                 {faq.category && (
                   <span className="mb-1.5 inline-block rounded-full bg-brand-amber/15 px-2 py-0.5 font-mono text-[9px] uppercase tracking-[0.12em] text-brand-navy">
                     {faq.category.name}
@@ -241,15 +293,18 @@ export function FaqsManager({
 
       {adding ? (
         <div className="rounded-xl border border-brand-navy/10 bg-white p-4 shadow-sm">
-          <EditForm onSave={saveNew} />
+          <FaqEditForm
+            form={form}
+            categories={categories}
+            saving={saving}
+            onChange={handleFormChange}
+            onSave={saveNew}
+            onCancel={cancel}
+          />
         </div>
       ) : (
         <button
-          onClick={() => {
-            setAdding(true);
-            setEditingId(null);
-            setForm(emptyForm);
-          }}
+          onClick={startAdd}
           className="flex items-center gap-2 self-start rounded-lg border border-dashed border-brand-navy/20 px-4 py-2.5 font-body text-sm font-medium text-brand-navy hover:border-brand-red hover:text-brand-red"
         >
           <Plus className="h-4 w-4" /> Add FAQ

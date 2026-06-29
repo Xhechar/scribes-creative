@@ -6,7 +6,7 @@ import { getAllCategories } from "@/lib/services/category.service";
 export const metadata: Metadata = {
   title: "Portfolio",
   description:
-    "Browse Scribes Creative Solutions' past work — branding, print, photography, signage, merchandise, and web development projects across Nairobi.",
+    "Browse Scribes Creative Solutions' past work — branding, print, photography, signage, merchandise, and web development projects across Eldoret.",
 };
 
 export default async function PortfolioPage() {

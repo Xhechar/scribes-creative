@@ -10,48 +10,106 @@ interface Category {
   name: string;
 }
 
-interface PortfolioFormProps {
-  itemId?: string;
+interface ServiceFormProps {
+  serviceId?: string;
   categories: Category[];
   initialData?: {
-    title: string;
+    name: string;
     slug: string;
     description: string;
-    clientName: string;
     categoryId: string;
+    requirements: string[];
+    processSteps: string[];
+    priceFrom: string;
+    priceUnit: string;
+    image: string;
     isFeatured: boolean;
     displayOrder: number;
-    imageUrls: string[];
   };
 }
 
-function slugify(str: string) {
-  return str
+function slugify(s: string) {
+  return s
     .toLowerCase()
     .trim()
     .replace(/[^a-z0-9\s-]/g, "")
     .replace(/\s+/g, "-");
 }
 
-export function PortfolioForm({
-  itemId,
+function MultiInput({
+  label,
+  values,
+  onChange,
+  placeholder,
+}: {
+  label: string;
+  values: string[];
+  onChange: (v: string[]) => void;
+  placeholder: string;
+}) {
+  return (
+    <div className="flex flex-col gap-2">
+      <label className="font-mono text-[10px] uppercase tracking-[0.15em] text-brand-slate">
+        {label}
+      </label>
+      {values.map((val, i) => (
+        <div key={i} className="flex gap-2">
+          <input
+            value={val}
+            onChange={(e) => {
+              const next = [...values];
+              next[i] = e.target.value;
+              onChange(next);
+            }}
+            placeholder={`${placeholder} ${i + 1}`}
+            className="flex-1 rounded-lg border border-brand-navy/20 px-3.5 py-2 font-body text-sm text-brand-navy placeholder:text-brand-navy/30 focus:border-brand-navy focus:outline-none"
+          />
+          {values.length > 1 && (
+            <button
+              type="button"
+              onClick={() => onChange(values.filter((_, j) => j !== i))}
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-brand-navy/10 text-brand-slate hover:bg-red-50 hover:text-brand-red"
+            >
+              <Trash2 className="h-3.5 w-3.5" />
+            </button>
+          )}
+        </div>
+      ))}
+      <button
+        type="button"
+        onClick={() => onChange([...values, ""])}
+        className="flex items-center gap-1.5 self-start font-body text-xs font-medium text-brand-navy hover:text-brand-red"
+      >
+        <Plus className="h-3.5 w-3.5" /> Add {label.toLowerCase()}
+      </button>
+    </div>
+  );
+}
+
+export function ServiceForm({
+  serviceId,
   categories,
   initialData,
-}: PortfolioFormProps) {
+}: ServiceFormProps) {
   const router = useRouter();
-  const isEditing = Boolean(itemId);
+  const isEditing = Boolean(serviceId);
 
   const [form, setForm] = useState({
-    title: initialData?.title ?? "",
+    name: initialData?.name ?? "",
     slug: initialData?.slug ?? "",
     description: initialData?.description ?? "",
-    clientName: initialData?.clientName ?? "",
-    categoryId: initialData?.categoryId ?? "",
+    categoryId: initialData?.categoryId ?? categories[0]?.id ?? "",
+    priceFrom: initialData?.priceFrom ?? "",
+    priceUnit: initialData?.priceUnit ?? "",
+    image: initialData?.image ?? "",
     isFeatured: initialData?.isFeatured ?? false,
     displayOrder: initialData?.displayOrder ?? 0,
   });
-  const [imageUrls, setImageUrls] = useState<string[]>(
-    initialData?.imageUrls?.length ? initialData.imageUrls : [""],
+  const [requirements, setRequirements] = useState<string[]>(
+    initialData?.requirements ?? [""],
+  );
+  const [processSteps, setProcessSteps] = useState<string[]>(
+    initialData?.processSteps ?? [""],
   );
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
@@ -68,7 +126,7 @@ export function PortfolioForm({
         [name]:
           type === "checkbox" ? (e.target as HTMLInputElement).checked : value,
       };
-      if (name === "title" && !isEditing) next.slug = slugify(value);
+      if (name === "name" && !isEditing) next.slug = slugify(value);
       return next;
     });
   }
@@ -79,21 +137,27 @@ export function PortfolioForm({
     setError("");
 
     const url = isEditing
-      ? `/api/admin/portfolio/${itemId}`
-      : "/api/admin/portfolio";
+      ? `/api/admin/services/${serviceId}`
+      : "/api/admin/services";
     const method = isEditing ? "PUT" : "POST";
 
     try {
       const res = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, imageUrls: imageUrls.filter(Boolean) }),
+        body: JSON.stringify({
+          ...form,
+          requirements: requirements.filter(Boolean),
+          processSteps: processSteps.filter(Boolean),
+          displayOrder: Number(form.displayOrder),
+          priceFrom: form.priceFrom ? Number(form.priceFrom) : null,
+        }),
       });
       if (!res.ok) {
         const d = await res.json();
-        throw new Error(d.error ?? "Failed to save.");
+        throw new Error(d.error ?? "Failed to save");
       }
-      router.push("/admin/portfolio");
+      router.push("/admin/services");
       router.refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong.");
@@ -105,7 +169,7 @@ export function PortfolioForm({
   return (
     <div className="mx-auto max-w-3xl">
       <h1 className="mb-6 font-display text-2xl font-bold text-brand-navy">
-        {isEditing ? "Edit Portfolio Item" : "Add Portfolio Item"}
+        {isEditing ? "Edit Service" : "New Service"}
       </h1>
 
       {error && (
@@ -116,17 +180,17 @@ export function PortfolioForm({
 
       <form
         onSubmit={handleSubmit}
-        className="flex flex-col gap-5 rounded-xl border border-brand-navy/10 bg-white p-6 shadow-sm"
+        className="flex flex-col gap-6 rounded-xl border border-brand-navy/10 bg-white p-6 shadow-sm"
       >
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
           <div className="flex flex-col gap-1.5">
             <label className="font-mono text-[10px] uppercase tracking-[0.15em] text-brand-slate">
-              Title *
+              Name *
             </label>
             <input
-              name="title"
+              name="name"
               required
-              value={form.title}
+              value={form.name}
               onChange={handleChange}
               className="rounded-lg border border-brand-navy/20 px-3.5 py-2.5 font-body text-sm text-brand-navy focus:border-brand-navy focus:outline-none"
             />
@@ -151,7 +215,7 @@ export function PortfolioForm({
           </label>
           <textarea
             name="description"
-            rows={3}
+            rows={2}
             value={form.description}
             onChange={handleChange}
             className="resize-none rounded-lg border border-brand-navy/20 px-3.5 py-2.5 font-body text-sm text-brand-navy focus:border-brand-navy focus:outline-none"
@@ -161,18 +225,7 @@ export function PortfolioForm({
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
           <div className="flex flex-col gap-1.5">
             <label className="font-mono text-[10px] uppercase tracking-[0.15em] text-brand-slate">
-              Client Name
-            </label>
-            <input
-              name="clientName"
-              value={form.clientName}
-              onChange={handleChange}
-              className="rounded-lg border border-brand-navy/20 px-3.5 py-2.5 font-body text-sm text-brand-navy focus:border-brand-navy focus:outline-none"
-            />
-          </div>
-          <div className="flex flex-col gap-1.5">
-            <label className="font-mono text-[10px] uppercase tracking-[0.15em] text-brand-slate">
-              Category
+              Category *
             </label>
             <select
               name="categoryId"
@@ -180,7 +233,6 @@ export function PortfolioForm({
               onChange={handleChange}
               className="rounded-lg border border-brand-navy/20 px-3.5 py-2.5 font-body text-sm text-brand-navy focus:border-brand-navy focus:outline-none"
             >
-              <option value="">None</option>
               {categories.map((c) => (
                 <option key={c.id} value={c.id}>
                   {c.name}
@@ -188,9 +240,6 @@ export function PortfolioForm({
               ))}
             </select>
           </div>
-        </div>
-
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
           <div className="flex flex-col gap-1.5">
             <label className="font-mono text-[10px] uppercase tracking-[0.15em] text-brand-slate">
               Display Order
@@ -203,67 +252,76 @@ export function PortfolioForm({
               className="rounded-lg border border-brand-navy/20 px-3.5 py-2.5 font-body text-sm text-brand-navy focus:border-brand-navy focus:outline-none"
             />
           </div>
-          <div className="flex items-center gap-3 pt-5">
-            <input
-              id="isFeatured"
-              name="isFeatured"
-              type="checkbox"
-              checked={form.isFeatured}
-              onChange={handleChange}
-              className="h-4 w-4 rounded border-brand-navy/30 accent-brand-red"
-            />
-            <label
-              htmlFor="isFeatured"
-              className="font-body text-sm text-brand-navy"
-            >
-              Feature on homepage
+        </div>
+
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+          <div className="flex flex-col gap-1.5">
+            <label className="font-mono text-[10px] uppercase tracking-[0.15em] text-brand-slate">
+              Starting Price (Ksh)
             </label>
+            <input
+              name="priceFrom"
+              type="number"
+              value={form.priceFrom}
+              onChange={handleChange}
+              placeholder="e.g. 1500"
+              className="rounded-lg border border-brand-navy/20 px-3.5 py-2.5 font-body text-sm text-brand-navy placeholder:text-brand-navy/30 focus:border-brand-navy focus:outline-none"
+            />
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <label className="font-mono text-[10px] uppercase tracking-[0.15em] text-brand-slate">
+              Price Unit
+            </label>
+            <input
+              name="priceUnit"
+              value={form.priceUnit}
+              onChange={handleChange}
+              placeholder="e.g. per 100 pieces"
+              className="rounded-lg border border-brand-navy/20 px-3.5 py-2.5 font-body text-sm text-brand-navy placeholder:text-brand-navy/30 focus:border-brand-navy focus:outline-none"
+            />
           </div>
         </div>
 
-        {/* Images — each slot is an ImageUpload */}
-        <div className="flex flex-col gap-3">
-          <label className="font-mono text-[10px] uppercase tracking-[0.15em] text-brand-slate">
-            Images (first is cover)
-          </label>
-          {imageUrls.map((url, idx) => (
-            <div key={idx} className="relative">
-              <ImageUpload
-                label={idx === 0 ? "Cover image" : `Image ${idx + 1}`}
-                value={url}
-                onChange={(newUrl) =>
-                  setImageUrls((prev) =>
-                    prev.map((u, i) => (i === idx ? newUrl : u)),
-                  )
-                }
-                aspectRatio="video"
-              />
-              {imageUrls.length > 1 && (
-                <button
-                  type="button"
-                  onClick={() =>
-                    setImageUrls((prev) => prev.filter((_, i) => i !== idx))
-                  }
-                  className="absolute right-0 top-0 flex items-center gap-1 rounded-md border border-brand-navy/10 bg-white px-2 py-1 font-body text-xs text-brand-slate hover:text-brand-red"
-                >
-                  <Trash2 className="h-3 w-3" /> Remove
-                </button>
-              )}
-            </div>
-          ))}
-          <button
-            type="button"
-            onClick={() => setImageUrls((prev) => [...prev, ""])}
-            className="flex items-center gap-1.5 self-start font-body text-sm font-medium text-brand-navy hover:text-brand-red"
+        <MultiInput
+          label="Requirements"
+          values={requirements}
+          onChange={setRequirements}
+          placeholder="e.g. Existing logo"
+        />
+        <MultiInput
+          label="Process Steps"
+          values={processSteps}
+          onChange={setProcessSteps}
+          placeholder="e.g. Contact us with details"
+        />
+
+        <ImageUpload
+          label="Service Image"
+          value={form.image}
+          onChange={(url) => setForm((p) => ({ ...p, image: url }))}
+        />
+
+        <div className="flex items-center gap-3">
+          <input
+            id="isFeatured"
+            name="isFeatured"
+            type="checkbox"
+            checked={form.isFeatured}
+            onChange={handleChange}
+            className="h-4 w-4 rounded border-brand-navy/30 accent-brand-red"
+          />
+          <label
+            htmlFor="isFeatured"
+            className="font-body text-sm text-brand-navy"
           >
-            <Plus className="h-4 w-4" /> Add another image
-          </button>
+            Feature this service
+          </label>
         </div>
 
         <div className="flex items-center justify-end gap-3 border-t border-brand-navy/10 pt-4">
           <button
             type="button"
-            onClick={() => router.push("/admin/portfolio")}
+            onClick={() => router.push("/admin/services")}
             className="rounded-md border border-brand-navy/20 px-4 py-2 font-body text-sm text-brand-navy hover:bg-brand-navy/5"
           >
             Cancel
@@ -278,7 +336,7 @@ export function PortfolioForm({
             ) : (
               <Save className="h-4 w-4" />
             )}
-            {saving ? "Saving…" : "Save"}
+            {saving ? "Saving…" : "Save Service"}
           </button>
         </div>
       </form>

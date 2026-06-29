@@ -6,10 +6,11 @@ import { PortfolioForm } from "@/components/admin/PortfolioForm";
 export default async function EditPortfolioItemPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
+  const { id: paramsId } = await params;
   const [item, categories] = await Promise.all([
-    getPortfolioItemAdmin(params.id),
+    getPortfolioItemAdmin(paramsId),
     getAllCategories(),
   ]);
 

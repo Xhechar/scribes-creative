@@ -4,7 +4,7 @@ import { ContactSection } from "@/components/sections/ContactSection";
 export const metadata: Metadata = {
   title: "Contact Us",
   description:
-    "Get in touch with Scribes Creative Solutions in Nairobi — WhatsApp, call, or fill in the form and we'll respond within a few hours.",
+    "Get in touch with Scribes Creative Solutions in Eldoret — WhatsApp, call, or fill in the form and we'll respond within a few hours.",
 };
 
 export default function ContactPage() {
