@@ -41,7 +41,7 @@ export default function AdminLoginPage() {
         {/* Logo */}
         <div className="mb-8 text-center">
           <span className="font-display text-3xl font-extrabold tracking-tight text-brand-paper">
-            SCR<span className="text-brand-amber">I</span>BES
+            SCRIBES
           </span>
           <p className="mt-1 font-mono text-xs uppercase tracking-[0.15em] text-brand-paper/50">
             Admin Panel

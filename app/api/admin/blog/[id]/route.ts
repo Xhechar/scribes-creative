@@ -28,8 +28,9 @@ const sanitizeOptions: sanitizeHtml.IOptions = {
 
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
+  const { id: paramsId } = await params;
   const session = await auth();
   if (!session)
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -51,7 +52,7 @@ export async function PUT(
   const cleanContent = sanitizeHtml(content ?? "", sanitizeOptions);
 
   const post = await prisma.post.update({
-    where: { id: params.id },
+    where: { id: paramsId },
     data: {
       title: title?.trim(),
       slug: slug?.trim().toLowerCase().replace(/\s+/g, "-"),
@@ -71,12 +72,13 @@ export async function PUT(
 
 export async function DELETE(
   _req: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
+  const { id: paramsId } = await params;
   const session = await auth();
   if (!session)
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  await prisma.post.delete({ where: { id: params.id } });
+  await prisma.post.delete({ where: { id: paramsId } });
   return NextResponse.json({ deleted: true });
 }

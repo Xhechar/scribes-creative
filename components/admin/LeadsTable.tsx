@@ -75,98 +75,104 @@ export function LeadsTable({ initialLeads }: { initialLeads: Lead[] }) {
             No leads in this category.
           </p>
         ) : (
-          <table className="w-full text-left">
-            <thead className="border-b border-brand-navy/10 bg-brand-paper/50">
-              <tr>
-                {["Name", "Contact", "Service / Message", "Status", "Date"].map(
-                  (h) => (
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-[640px] text-left">
+              <thead className="border-b border-brand-navy/10 bg-brand-paper/50">
+                <tr>
+                  {[
+                    "Name",
+                    "Contact",
+                    "Service / Message",
+                    "Status",
+                    "Date",
+                  ].map((h) => (
                     <th
                       key={h}
                       className="px-4 py-3 font-mono text-[10px] uppercase tracking-[0.12em] text-brand-slate"
                     >
                       {h}
                     </th>
-                  ),
-                )}
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-brand-navy/5">
-              {filtered.map((lead) => (
-                <>
-                  <tr
-                    key={lead.id}
-                    className="cursor-pointer hover:bg-brand-paper/30"
-                    onClick={() =>
-                      setExpanded(expanded === lead.id ? null : lead.id)
-                    }
-                  >
-                    <td className="px-4 py-3 font-body text-sm font-semibold text-brand-navy">
-                      {lead.name}
-                    </td>
-                    <td className="px-4 py-3">
-                      <a
-                        href={`tel:${lead.phone}`}
-                        onClick={(e) => e.stopPropagation()}
-                        className="flex items-center gap-1.5 font-body text-sm text-brand-slate hover:text-brand-navy"
-                      >
-                        <Phone className="h-3 w-3" />
-                        {lead.phone}
-                      </a>
-                      {lead.email && (
-                        <a
-                          href={`mailto:${lead.email}`}
-                          onClick={(e) => e.stopPropagation()}
-                          className="mt-0.5 flex items-center gap-1.5 font-body text-xs text-brand-slate hover:text-brand-navy"
-                        >
-                          <Mail className="h-3 w-3" />
-                          {lead.email}
-                        </a>
-                      )}
-                    </td>
-                    <td className="max-w-xs truncate px-4 py-3 font-body text-xs text-brand-slate">
-                      {lead.message ?? "—"}
-                    </td>
-                    <td
-                      className="px-4 py-3"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <select
-                        value={lead.status}
-                        onChange={(e) =>
-                          updateStatus(lead.id, e.target.value as LeadStatus)
-                        }
-                        className={cn(
-                          "rounded-full px-3 py-1 font-body text-xs font-medium focus:outline-none",
-                          statusColors[lead.status],
-                        )}
-                      >
-                        {statusOptions.map((s) => (
-                          <option key={s} value={s}>
-                            {s.charAt(0) + s.slice(1).toLowerCase()}
-                          </option>
-                        ))}
-                      </select>
-                    </td>
-                    <td className="px-4 py-3 font-mono text-[10px] text-brand-slate">
-                      {new Date(lead.createdAt).toLocaleDateString("en-KE")}
-                    </td>
-                  </tr>
-                  {expanded === lead.id && lead.message && (
+                  ))}
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-brand-navy/5">
+                {filtered.map((lead) => (
+                  <>
                     <tr
-                      key={`${lead.id}-expanded`}
-                      className="bg-brand-paper/30"
+                      key={lead.id}
+                      className="cursor-pointer hover:bg-brand-paper/30"
+                      onClick={() =>
+                        setExpanded(expanded === lead.id ? null : lead.id)
+                      }
                     >
-                      <td colSpan={5} className="px-5 py-3">
-                        <p className="font-body text-sm text-brand-navy">
-                          {lead.message}
-                        </p>
+                      <td className="px-4 py-3 font-body text-sm font-semibold text-brand-navy">
+                        {lead.name}
+                      </td>
+                      <td className="px-4 py-3">
+                        <a
+                          href={`tel:${lead.phone}`}
+                          onClick={(e) => e.stopPropagation()}
+                          className="flex items-center gap-1.5 font-body text-sm text-brand-slate hover:text-brand-navy"
+                        >
+                          <Phone className="h-3 w-3" />
+                          {lead.phone}
+                        </a>
+                        {lead.email && (
+                          <a
+                            href={`mailto:${lead.email}`}
+                            onClick={(e) => e.stopPropagation()}
+                            className="mt-0.5 flex items-center gap-1.5 font-body text-xs text-brand-slate hover:text-brand-navy"
+                          >
+                            <Mail className="h-3 w-3" />
+                            {lead.email}
+                          </a>
+                        )}
+                      </td>
+                      <td className="max-w-xs truncate px-4 py-3 font-body text-xs text-brand-slate">
+                        {lead.message ?? "—"}
+                      </td>
+                      <td
+                        className="px-4 py-3"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <select
+                          value={lead.status}
+                          onChange={(e) =>
+                            updateStatus(lead.id, e.target.value as LeadStatus)
+                          }
+                          className={cn(
+                            "rounded-full px-3 py-1 font-body text-xs font-medium focus:outline-none",
+                            statusColors[lead.status],
+                          )}
+                        >
+                          {statusOptions.map((s) => (
+                            <option key={s} value={s}>
+                              {s.charAt(0) + s.slice(1).toLowerCase()}
+                            </option>
+                          ))}
+                        </select>
+                      </td>
+                      <td className="px-4 py-3 font-mono text-[10px] text-brand-slate">
+                        {new Date(lead.createdAt).toLocaleDateString("en-KE")}
                       </td>
                     </tr>
-                  )}
-                </>
-              ))}
-            </tbody>
-          </table>
+                    {expanded === lead.id && lead.message && (
+                      <tr
+                        key={`${lead.id}-expanded`}
+                        className="bg-brand-paper/30"
+                      >
+                        <td colSpan={5} className="px-5 py-3">
+                          <p className="font-body text-sm text-brand-navy">
+                            {lead.message}
+                          </p>
+                        </td>
+                      </tr>
+                    )}
+                  </>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
       </div>
     </div>

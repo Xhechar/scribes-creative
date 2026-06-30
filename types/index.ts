@@ -17,6 +17,7 @@ export interface SiteConfig {
   phoneDisplay: string;
   whatsappNumber: string; // international format, no symbols, for wa.me links
   email: string;
+  hours: { days: string, time: string }[];
   address: string;
   latitude: number;
   longitude: number;

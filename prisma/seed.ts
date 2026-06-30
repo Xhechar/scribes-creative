@@ -148,6 +148,12 @@ async function main() {
     "Seeding reviews (placeholder — replace with real ones before launch)...",
   );
   for (const review of reviews) {
+    const reviewCategory = review.categorySlug
+      ? await prisma.serviceCategory.findUnique({
+          where: { slug: review.categorySlug },
+        })
+      : null;
+
     await prisma.review.upsert({
       where: { id: review.id },
       update: {
@@ -156,6 +162,7 @@ async function main() {
         comment: review.comment,
         source: review.source,
         publishedAt: new Date(review.publishedAt),
+        categoryId: reviewCategory?.id ?? null,
         isApproved: true,
       },
       create: {
@@ -165,6 +172,7 @@ async function main() {
         comment: review.comment,
         source: review.source,
         publishedAt: new Date(review.publishedAt),
+        categoryId: reviewCategory?.id ?? null,
         isApproved: true,
       },
     });

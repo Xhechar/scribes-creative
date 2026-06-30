@@ -28,3 +28,16 @@ export async function getReviewStats() {
     count: result._count.rating ?? 0,
   };
 }
+
+export async function getCategoryReviewStats(categoryId: string) {
+  const result = await prisma.review.aggregate({
+    where: { isApproved: true, categoryId },
+    _avg: { rating: true },
+    _count: { rating: true },
+  });
+
+  return {
+    average: result._avg.rating ?? 0,
+    count: result._count.rating ?? 0,
+  };
+}

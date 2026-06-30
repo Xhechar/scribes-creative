@@ -60,76 +60,78 @@ export default async function AdminBlogPage() {
         </div>
       ) : (
         <div className="overflow-hidden rounded-xl border border-brand-navy/10 bg-white shadow-sm">
-          <table className="w-full text-left">
-            <thead className="border-b border-brand-navy/10 bg-brand-paper/50">
-              <tr>
-                {["Title", "Status", "Category", "Tags", "Date", ""].map(
-                  (h) => (
-                    <th
-                      key={h}
-                      className="px-4 py-3 font-mono text-[10px] uppercase tracking-[0.12em] text-brand-slate"
-                    >
-                      {h}
-                    </th>
-                  ),
-                )}
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-brand-navy/5">
-              {posts.map((post: PostRow) => (
-                <tr key={post.id} className="group hover:bg-brand-paper/30">
-                  <td className="px-4 py-3">
-                    <p className="font-body text-sm font-semibold text-brand-navy">
-                      {post.title}
-                    </p>
-                    <p className="font-mono text-[10px] text-brand-slate">
-                      /blog/{post.slug}
-                    </p>
-                  </td>
-                  <td className="px-4 py-3">
-                    {post.publishedAt ? (
-                      <span className="flex items-center gap-1 font-mono text-[10px] text-green-600">
-                        <Globe className="h-3 w-3" /> Published
-                      </span>
-                    ) : (
-                      <span className="font-mono text-[10px] text-brand-slate">
-                        Draft
-                      </span>
-                    )}
-                  </td>
-                  <td className="px-4 py-3 font-body text-xs text-brand-slate">
-                    {post.category?.name ?? "—"}
-                  </td>
-                  <td className="px-4 py-3">
-                    <div className="flex flex-wrap gap-1">
-                      {post.tags.slice(0, 2).map((tag: string) => (
-                        <span
-                          key={tag}
-                          className="rounded-full bg-brand-amber/15 px-2 py-0.5 font-mono text-[9px] text-brand-navy"
-                        >
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-                  </td>
-                  <td className="px-4 py-3 font-mono text-[10px] text-brand-slate">
-                    {formatDate(post.publishedAt)}
-                  </td>
-                  <td className="px-4 py-3">
-                    <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100">
-                      <Link
-                        href={`/admin/blog/${post.id}`}
-                        className="flex h-7 w-7 items-center justify-center rounded text-brand-slate hover:bg-brand-navy/10 hover:text-brand-navy"
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-[640px] text-left">
+              <thead className="border-b border-brand-navy/10 bg-brand-paper/50">
+                <tr>
+                  {["Title", "Status", "Category", "Tags", "Date", ""].map(
+                    (h) => (
+                      <th
+                        key={h}
+                        className="px-4 py-3 font-mono text-[10px] uppercase tracking-[0.12em] text-brand-slate"
                       >
-                        <Pencil className="h-3.5 w-3.5" />
-                      </Link>
-                      <DeletePostButton id={post.id} />
-                    </div>
-                  </td>
+                        {h}
+                      </th>
+                    ),
+                  )}
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-brand-navy/5">
+                {posts.map((post: PostRow) => (
+                  <tr key={post.id} className="group hover:bg-brand-paper/30">
+                    <td className="px-4 py-3">
+                      <p className="font-body text-sm font-semibold text-brand-navy">
+                        {post.title}
+                      </p>
+                      <p className="font-mono text-[10px] text-brand-slate">
+                        /blog/{post.slug}
+                      </p>
+                    </td>
+                    <td className="px-4 py-3">
+                      {post.publishedAt ? (
+                        <span className="flex items-center gap-1 font-mono text-[10px] text-green-600">
+                          <Globe className="h-3 w-3" /> Published
+                        </span>
+                      ) : (
+                        <span className="font-mono text-[10px] text-brand-slate">
+                          Draft
+                        </span>
+                      )}
+                    </td>
+                    <td className="px-4 py-3 font-body text-xs text-brand-slate">
+                      {post.category?.name ?? "—"}
+                    </td>
+                    <td className="px-4 py-3">
+                      <div className="flex flex-wrap gap-1">
+                        {post.tags.slice(0, 2).map((tag: string) => (
+                          <span
+                            key={tag}
+                            className="rounded-full bg-brand-amber/15 px-2 py-0.5 font-mono text-[9px] text-brand-navy"
+                          >
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    </td>
+                    <td className="px-4 py-3 font-mono text-[10px] text-brand-slate">
+                      {formatDate(post.publishedAt)}
+                    </td>
+                    <td className="px-4 py-3">
+                      <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100">
+                        <Link
+                          href={`/admin/blog/${post.id}`}
+                          className="flex h-7 w-7 items-center justify-center rounded text-brand-slate hover:bg-brand-navy/10 hover:text-brand-navy"
+                        >
+                          <Pencil className="h-3.5 w-3.5" />
+                        </Link>
+                        <DeletePostButton id={post.id} />
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
     </div>

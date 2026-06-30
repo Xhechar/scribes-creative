@@ -4,8 +4,9 @@ import prisma from "@/lib/prisma";
 
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
+  const { id: paramsId } = await params;
   const session = await auth();
   if (!session)
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -13,7 +14,7 @@ export async function PUT(
   const { name, slug, description, icon, type, displayOrder, heroImage } =
     await req.json();
   const cat = await prisma.serviceCategory.update({
-    where: { id: params.id },
+    where: { id: paramsId },
     data: {
       name: name?.trim(),
       slug: slug?.trim().toLowerCase().replace(/\s+/g, "-"),
@@ -29,11 +30,12 @@ export async function PUT(
 
 export async function DELETE(
   _req: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
+  const { id: paramsId } = await params;
   const session = await auth();
   if (!session)
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  await prisma.serviceCategory.delete({ where: { id: params.id } });
+  await prisma.serviceCategory.delete({ where: { id: paramsId } });
   return NextResponse.json({ deleted: true });
 }

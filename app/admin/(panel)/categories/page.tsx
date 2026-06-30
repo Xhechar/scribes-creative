@@ -51,65 +51,67 @@ export default async function AdminCategoriesPage() {
         </div>
       ) : (
         <div className="overflow-hidden rounded-xl border border-brand-navy/10 bg-white shadow-sm">
-          <table className="w-full text-left">
-            <thead className="border-b border-brand-navy/10 bg-brand-paper/50">
-              <tr>
-                {["Category", "Type", "Services", "Order", ""].map((h) => (
-                  <th
-                    key={h}
-                    className="px-4 py-3 font-mono text-[10px] uppercase tracking-[0.12em] text-brand-slate"
-                  >
-                    {h}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-brand-navy/5">
-              {cats.map((cat: CatRow) => (
-                <tr key={cat.id} className="group hover:bg-brand-paper/30">
-                  <td className="px-4 py-3">
-                    <p className="font-body text-sm font-semibold text-brand-navy">
-                      {cat.name}
-                    </p>
-                    <p className="font-mono text-[10px] text-brand-slate">
-                      /services/{cat.slug}
-                    </p>
-                  </td>
-                  <td className="px-4 py-3">
-                    <span
-                      className={`rounded-full px-2.5 py-0.5 font-mono text-[9px] uppercase tracking-wide ${
-                        cat.type === "CREATIVE"
-                          ? "bg-brand-navy/10 text-brand-navy"
-                          : "bg-brand-amber/15 text-brand-navy"
-                      }`}
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-[560px] text-left">
+              <thead className="border-b border-brand-navy/10 bg-brand-paper/50">
+                <tr>
+                  {["Category", "Type", "Services", "Order", ""].map((h) => (
+                    <th
+                      key={h}
+                      className="px-4 py-3 font-mono text-[10px] uppercase tracking-[0.12em] text-brand-slate"
                     >
-                      {cat.type}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3 font-body text-sm text-brand-slate">
-                    {cat._count.services}
-                  </td>
-                  <td className="px-4 py-3 font-mono text-xs text-brand-slate">
-                    {cat.displayOrder}
-                  </td>
-                  <td className="px-4 py-3">
-                    <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100">
-                      <Link
-                        href={`/admin/categories/${cat.id}`}
-                        className="flex h-7 w-7 items-center justify-center rounded text-brand-slate hover:bg-brand-navy/10 hover:text-brand-navy"
-                      >
-                        <Pencil className="h-3.5 w-3.5" />
-                      </Link>
-                      <DeleteCategoryButton
-                        id={cat.id}
-                        serviceCount={cat._count.services}
-                      />
-                    </div>
-                  </td>
+                      {h}
+                    </th>
+                  ))}
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-brand-navy/5">
+                {cats.map((cat: CatRow) => (
+                  <tr key={cat.id} className="group hover:bg-brand-paper/30">
+                    <td className="px-4 py-3">
+                      <p className="font-body text-sm font-semibold text-brand-navy">
+                        {cat.name}
+                      </p>
+                      <p className="font-mono text-[10px] text-brand-slate">
+                        /services/{cat.slug}
+                      </p>
+                    </td>
+                    <td className="px-4 py-3">
+                      <span
+                        className={`rounded-full px-2.5 py-0.5 font-mono text-[9px] uppercase tracking-wide ${
+                          cat.type === "CREATIVE"
+                            ? "bg-brand-navy/10 text-brand-navy"
+                            : "bg-brand-amber/15 text-brand-navy"
+                        }`}
+                      >
+                        {cat.type}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3 font-body text-sm text-brand-slate">
+                      {cat._count.services}
+                    </td>
+                    <td className="px-4 py-3 font-mono text-xs text-brand-slate">
+                      {cat.displayOrder}
+                    </td>
+                    <td className="px-4 py-3">
+                      <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100">
+                        <Link
+                          href={`/admin/categories/${cat.id}`}
+                          className="flex h-7 w-7 items-center justify-center rounded text-brand-slate hover:bg-brand-navy/10 hover:text-brand-navy"
+                        >
+                          <Pencil className="h-3.5 w-3.5" />
+                        </Link>
+                        <DeleteCategoryButton
+                          id={cat.id}
+                          serviceCount={cat._count.services}
+                        />
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
     </div>

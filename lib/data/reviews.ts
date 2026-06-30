@@ -1,4 +1,3 @@
-
 export interface ReviewSeed {
   id: string;
   authorName: string;
@@ -6,6 +5,7 @@ export interface ReviewSeed {
   comment: string;
   source: "GOOGLE" | "SITE";
   publishedAt: string; // ISO date
+  categorySlug?: string; // ties the review to a category for category-level trust strips
 }
 
 export const reviews: ReviewSeed[] = [
@@ -17,6 +17,7 @@ export const reviews: ReviewSeed[] = [
       "Scribes redid our entire brand identity — business cards, letterhead, the works. Customers actually comment on how professional we look now.",
     source: "SITE",
     publishedAt: "2026-05-02",
+    categorySlug: "branding-design",
   },
   {
     id: "review-mohammed",
@@ -26,6 +27,7 @@ export const reviews: ReviewSeed[] = [
       "Ordered banners for our shop opening on a tight deadline and they delivered, literally. Print quality was excellent.",
     source: "SITE",
     publishedAt: "2026-04-18",
+    categorySlug: "print-signage",
   },
   {
     id: "review-akinyi",
@@ -35,6 +37,7 @@ export const reviews: ReviewSeed[] = [
       "Booked them for our wedding invitations and programs. Everything matched our theme perfectly and arrived two days early.",
     source: "SITE",
     publishedAt: "2026-03-25",
+    categorySlug: "events-occasions",
   },
   {
     id: "review-brian",
@@ -44,6 +47,7 @@ export const reviews: ReviewSeed[] = [
       "Good photography team for our product shoot. A couple of reshoots needed but the final images were worth it.",
     source: "SITE",
     publishedAt: "2026-03-10",
+    categorySlug: "photography",
   },
   {
     id: "review-faith",
@@ -53,6 +57,7 @@ export const reviews: ReviewSeed[] = [
       "They built our company website in under three weeks and it actually ranks on Google now. Communication was clear throughout.",
     source: "SITE",
     publishedAt: "2026-02-20",
+    categorySlug: "web-development",
   },
   {
     id: "review-daniel",
@@ -62,5 +67,6 @@ export const reviews: ReviewSeed[] = [
       "Vehicle branding for our delivery van came out exactly as designed. Will be bringing the rest of the fleet here.",
     source: "SITE",
     publishedAt: "2026-01-15",
+    categorySlug: "print-signage",
   },
 ];

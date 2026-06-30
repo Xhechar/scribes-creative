@@ -73,47 +73,49 @@ export default async function AdminServicesPage() {
                   {items.length} services
                 </span>
               </div>
-              <table className="w-full text-left">
-                <tbody className="divide-y divide-brand-navy/5">
-                  {items.map((s: ServiceRow) => (
-                    <tr key={s.id} className="group hover:bg-brand-paper/20">
-                      <td className="px-4 py-3">
-                        <p className="font-body text-sm font-semibold text-brand-navy">
-                          {s.name}
-                        </p>
-                        <p className="font-mono text-[10px] text-brand-slate">
-                          /services/…/{s.slug}
-                        </p>
-                      </td>
-                      <td className="px-4 py-3">
-                        {s.priceFrom ? (
-                          <span className="font-mono text-[10px] text-brand-red">
-                            Ksh {s.priceFrom.toLocaleString()} {s.priceUnit}
-                          </span>
-                        ) : (
-                          <span className="font-mono text-[10px] text-brand-slate">
-                            Quote only
-                          </span>
-                        )}
-                      </td>
-                      <td className="px-4 py-3 font-mono text-[10px] text-brand-slate">
-                        # {s.displayOrder}
-                      </td>
-                      <td className="px-4 py-3">
-                        <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100">
-                          <Link
-                            href={`/admin/services/${s.id}`}
-                            className="flex h-7 w-7 items-center justify-center rounded text-brand-slate hover:bg-brand-navy/10 hover:text-brand-navy"
-                          >
-                            <Pencil className="h-3.5 w-3.5" />
-                          </Link>
-                          <DeleteServiceButton id={s.id} />
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+              <div className="overflow-x-auto">
+                <table className="w-full min-w-[480px] text-left">
+                  <tbody className="divide-y divide-brand-navy/5">
+                    {items.map((s: ServiceRow) => (
+                      <tr key={s.id} className="group hover:bg-brand-paper/20">
+                        <td className="px-4 py-3">
+                          <p className="font-body text-sm font-semibold text-brand-navy">
+                            {s.name}
+                          </p>
+                          <p className="font-mono text-[10px] text-brand-slate">
+                            /services/…/{s.slug}
+                          </p>
+                        </td>
+                        <td className="px-4 py-3">
+                          {s.priceFrom ? (
+                            <span className="font-mono text-[10px] text-brand-red">
+                              Ksh {s.priceFrom.toLocaleString()} {s.priceUnit}
+                            </span>
+                          ) : (
+                            <span className="font-mono text-[10px] text-brand-slate">
+                              Quote only
+                            </span>
+                          )}
+                        </td>
+                        <td className="px-4 py-3 font-mono text-[10px] text-brand-slate">
+                          # {s.displayOrder}
+                        </td>
+                        <td className="px-4 py-3">
+                          <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100">
+                            <Link
+                              href={`/admin/services/${s.id}`}
+                              className="flex h-7 w-7 items-center justify-center rounded text-brand-slate hover:bg-brand-navy/10 hover:text-brand-navy"
+                            >
+                              <Pencil className="h-3.5 w-3.5" />
+                            </Link>
+                            <DeleteServiceButton id={s.id} />
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
           ))}
         </div>

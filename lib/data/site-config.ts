@@ -8,6 +8,11 @@ export const siteConfig: SiteConfig = {
   phoneDisplay: "0116 351 761",
   whatsappNumber: "254116351761",
   email: "creativesoltn@gmail.com",
+  hours: [
+    { days: "Monday – Friday", time: "8:00 AM – 6:00 PM" },
+    { days: "Saturday", time: "9:00 AM – 4:00 PM" },
+    { days: "Sunday", time: "Closed" },
+  ],
   address: "Opposite Huduma Center Eldoret, Kenya", // TODO: exact street address for the map + LocalBusiness schema
   latitude: 0.5189776,
   longitude: 35.2713036,

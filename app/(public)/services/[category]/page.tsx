@@ -10,7 +10,13 @@ import {
 import { getServicesByCategory } from "@/lib/services/service.service";
 import { getPortfolioItemsByCategory } from "@/lib/services/portfolio.service";
 import { getFaqsByCategory } from "@/lib/services/faq.service";
+import {
+  getCategoryReviewStats,
+  getReviewStats,
+} from "@/lib/services/review.service";
 import { Section, Breadcrumb } from "@/components/ui/shared";
+import { TrustStrip } from "@/components/ui/TrustStrip";
+import { BenefitsRow } from "@/components/ui/BenefitsRow";
 import { FaqSection } from "@/components/sections/FaqSection";
 import { siteConfig } from "@/lib/data/site-config";
 import type { ServiceItem, PortfolioItemSummary } from "@/types";
@@ -25,10 +31,39 @@ export async function generateMetadata({
 }: {
   params: Promise<{ category: string }>;
 }): Promise<Metadata> {
-  const { category: categorySlug } = await params;
-  const category = await getCategoryBySlug(categorySlug);
+  const { category: categoryParams } = await params;
+  const category = await getCategoryBySlug(categoryParams);
   if (!category) return {};
   return { title: category.name, description: category.description };
+}
+
+function RegMark({ className = "" }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 40 40"
+      className={className}
+      fill="none"
+      aria-hidden="true"
+    >
+      <circle cx="20" cy="20" r="17" stroke="currentColor" strokeWidth="1" />
+      <line
+        x1="20"
+        y1="1"
+        x2="20"
+        y2="39"
+        stroke="currentColor"
+        strokeWidth="1"
+      />
+      <line
+        x1="1"
+        y1="20"
+        x2="39"
+        y2="20"
+        stroke="currentColor"
+        strokeWidth="1"
+      />
+    </svg>
+  );
 }
 
 export default async function CategoryPage({
@@ -36,19 +71,29 @@ export default async function CategoryPage({
 }: {
   params: Promise<{ category: string }>;
 }) {
-  const { category: categorySlug } = await params;
-  const category = await getCategoryBySlug(categorySlug);
+  const { category: categoryParams } = await params;
+  const category = await getCategoryBySlug(categoryParams);
   if (!category) notFound();
 
-  const [services, portfolioItems, faqs] = await Promise.all([
-    getServicesByCategory(categorySlug),
-    getPortfolioItemsByCategory(category.id),
-    getFaqsByCategory(category.id),
-  ]);
+  const [services, portfolioItems, faqs, categoryStats, siteStats] =
+    await Promise.all([
+      getServicesByCategory(categoryParams),
+      getPortfolioItemsByCategory(category.id),
+      getFaqsByCategory(category.id),
+      getCategoryReviewStats(category.id),
+      getReviewStats(),
+    ]);
+
+  // Prefer category-specific rating; fall back to site-wide so the strip
+  // isn't empty on newer categories that don't have reviews tagged yet.
+  const hasOwnReviews = categoryStats.count > 0;
+  const displayStats = hasOwnReviews ? categoryStats : siteStats;
 
   return (
     <>
-      <section className="bg-brand-navy py-16 sm:py-20">
+      {/* ── Hero ── */}
+      <section className="relative overflow-hidden bg-brand-navy py-16 sm:py-20">
+        <RegMark className="pointer-events-none absolute -right-6 top-6 h-24 w-24 text-brand-paper/[0.04]" />
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
           <Breadcrumb
             crumbs={[
@@ -65,18 +110,36 @@ export default async function CategoryPage({
           <p className="mt-4 max-w-xl font-body text-base text-brand-paper/70">
             {category.description}
           </p>
+
+          {displayStats.count > 0 && (
+            <TrustStrip
+              averageRating={displayStats.average}
+              reviewCount={displayStats.count}
+              label={hasOwnReviews ? `in ${category.name}` : undefined}
+              variant="dark"
+              className="mt-5"
+            />
+          )}
+
           <a
             href={`https://wa.me/${siteConfig.whatsappNumber}?text=Hi%20Scribes%2C%20I%27m%20interested%20in%20${encodeURIComponent(category.name)}.`}
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-6 inline-flex items-center gap-2 rounded-md bg-brand-red px-5 py-2.5 font-body text-sm font-semibold text-brand-paper hover:bg-brand-red/90"
+            className="mt-6 inline-flex items-center gap-2 rounded-md bg-brand-red px-5 py-2.5 font-body text-sm font-semibold text-brand-paper transition-colors hover:bg-brand-red/90"
           >
-            Get a Quote <ArrowRight className="h-4 w-4" />
+            Get a Quote
+            <ArrowRight className="h-4 w-4" />
           </a>
         </div>
       </section>
 
-      <Section className="bg-brand-paper">
+      {/* ── Benefits row ── */}
+      <Section className="bg-brand-paper !py-10">
+        <BenefitsRow />
+      </Section>
+
+      {/* ── Services grid ── */}
+      <Section className="bg-brand-paper !pt-0">
         <h2 className="font-display text-2xl font-bold text-brand-navy sm:text-3xl">
           What&rsquo;s included
         </h2>
@@ -84,7 +147,7 @@ export default async function CategoryPage({
           {(services as ServiceItem[]).map((service) => (
             <Link
               key={service.id}
-              href={`/services/${categorySlug}/${service.slug}`}
+              href={`/services/${categoryParams}/${service.slug}`}
               className="group flex flex-col gap-3 rounded-xl border border-brand-navy/10 bg-white p-5 transition-shadow hover:shadow-md"
             >
               <div className="flex items-start justify-between gap-3">
@@ -119,6 +182,7 @@ export default async function CategoryPage({
         </div>
       </Section>
 
+      {/* ── Portfolio strip ── */}
       {portfolioItems.length > 0 && (
         <Section className="bg-white">
           <h2 className="font-display text-2xl font-bold text-brand-navy sm:text-3xl">
