@@ -10,11 +10,14 @@ module.exports = {
     extend: {
       colors: {
         brand: {
-          navy: "#000259", // primary — headings, nav/footer, primary text - 000259 -other -> 030028
-          amber: "#FF9D00", // secondary accent — highlights, hover states - FF9D00 -other -> E63946
-          red: "#FFAE00", // tertiary accent — primary CTAs, registration-mark motif
-          paper: "#F7F4EE", // background
-          slate: "#5B5F73", // muted/secondary text
+          navy: "#5241c5", // logo primary blue/purple — used for accents, headings, interactive
+          amber: "#e68e66", // logo orange — secondary accent, hover states
+          red: "#cf564d", // logo red — primary CTAs, registration-mark motif
+
+          dark: "#160f3a", // very dark purple — ONLY for nav/footer/admin sidebar backgrounds
+          // keeps the multicolour logo always readable
+          paper: "#F7F4EE", // off-white background
+          slate: "#5B5F73", // muted body/secondary text
         },
       },
       fontFamily: {

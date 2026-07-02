@@ -4,8 +4,8 @@ import { Suspense, useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Eye, EyeOff, Loader } from "lucide-react";
+import { Logo } from "@/components/ui/Logo";
 
-// ── Inner component — uses useSearchParams() so it MUST be inside <Suspense>
 function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -47,7 +47,6 @@ function LoginForm() {
       </h1>
 
       <div className="mt-6 flex flex-col gap-4">
-        {/* Email */}
         <div className="flex flex-col gap-1.5">
           <label
             htmlFor="email"
@@ -67,7 +66,6 @@ function LoginForm() {
           />
         </div>
 
-        {/* Password */}
         <div className="flex flex-col gap-1.5">
           <label
             htmlFor="password"
@@ -117,23 +115,19 @@ function LoginForm() {
   );
 }
 
-// ── Page shell — static, no search-params dependency
-// The Suspense fallback keeps the layout stable while the form hydrates
 export default function AdminLoginPage() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-brand-navy px-4">
+    <div className="flex min-h-screen items-center justify-center bg-brand-dark px-4">
       <div className="w-full max-w-sm">
-        {/* Logo */}
-        <div className="mb-8 text-center">
-          <span className="font-display text-3xl font-extrabold tracking-tight text-brand-paper">
-            SCR<span className="text-brand-amber">I</span>BES
-          </span>
-          <p className="mt-1 font-mono text-xs uppercase tracking-[0.15em] text-brand-paper/50">
+        {/* Logo — larger for the full-page login context */}
+        <div className="mb-8 flex flex-col items-center gap-2">
+          <Logo height={52} variant="dark-bg" asLink={false} />
+          <p className="font-mono text-xs uppercase tracking-[0.15em] text-brand-paper/50">
             Admin Panel
           </p>
         </div>
 
-        {/* Suspense boundary — required by Next.js for useSearchParams() */}
+        {/* Suspense boundary required for useSearchParams() in App Router */}
         <Suspense
           fallback={
             <div className="flex h-48 items-center justify-center rounded-xl border border-brand-paper/10 bg-brand-paper">

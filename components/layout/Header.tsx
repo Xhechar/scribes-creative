@@ -18,6 +18,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { FaWhatsapp } from "react-icons/fa6";
+import { Logo } from "@/components/ui/Logo";
 import { siteConfig } from "@/lib/data/site-config";
 import { cn } from "@/lib/utils";
 import type { NavCategory } from "@/types";
@@ -40,46 +41,6 @@ const navLinks = [
   { label: "Contact", href: "/contact" },
 ];
 
-function RegMark({ className = "" }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 16 16"
-      className={className}
-      fill="none"
-      aria-hidden="true"
-    >
-      <circle cx="8" cy="8" r="6.5" stroke="currentColor" strokeWidth="1" />
-      <line
-        x1="8"
-        y1="1"
-        x2="8"
-        y2="15"
-        stroke="currentColor"
-        strokeWidth="1"
-      />
-      <line
-        x1="1"
-        y1="8"
-        x2="15"
-        y2="8"
-        stroke="currentColor"
-        strokeWidth="1"
-      />
-    </svg>
-  );
-}
-
-function Logo({ className }: { className?: string }) {
-  return (
-    <Link href="/" className={cn("flex items-center gap-1.5 group", className)}>
-      <RegMark className="h-4 w-4 text-brand-red transition-transform duration-300 group-hover:rotate-45" />
-      <span className="font-display text-2xl font-extrabold tracking-tight text-brand-paper">
-        SCRIBES
-      </span>
-    </Link>
-  );
-}
-
 export function Header({ categories }: { categories: NavCategory[] }) {
   const [servicesOpen, setServicesOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -88,9 +49,11 @@ export function Header({ categories }: { categories: NavCategory[] }) {
   const utility = categories.filter((c) => c.type === "UTILITY");
 
   return (
-    <header className="sticky top-0 z-50 bg-brand-navy">
+    // bg-brand-dark keeps the header very dark so every colour in the logo is readable
+    <header className="sticky top-0 z-50 bg-brand-dark">
       <div className="mx-auto flex max-w-8xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
-        <Logo />
+        {/* Logo */}
+        <Logo height={50} variant="dark-bg" />
 
         {/* Desktop nav */}
         <nav className="hidden items-center gap-8 lg:flex">
@@ -114,7 +77,7 @@ export function Header({ categories }: { categories: NavCategory[] }) {
 
             {servicesOpen && (
               <div className="absolute left-1/2 top-full w-[640px] -translate-x-1/2 pt-4">
-                <div className="rounded-lg border border-brand-navy/10 bg-brand-paper p-6 shadow-xl">
+                <div className="rounded-lg border border-brand-navy/20 bg-brand-paper p-6 shadow-xl">
                   <div className="grid grid-cols-2 gap-4">
                     {creative.map((category) => {
                       const Icon = category.icon
@@ -126,7 +89,7 @@ export function Header({ categories }: { categories: NavCategory[] }) {
                           href={`/services/${category.slug}`}
                           className="group flex items-start gap-3 rounded-md p-2 transition-colors hover:bg-brand-navy/5"
                         >
-                          <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-brand-navy/5 text-brand-navy group-hover:bg-brand-red group-hover:text-brand-paper">
+                          <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-brand-navy/10 text-brand-navy group-hover:bg-brand-red group-hover:text-brand-paper">
                             {Icon && <Icon className="h-4 w-4" />}
                           </span>
                           <span>
@@ -216,7 +179,7 @@ export function Header({ categories }: { categories: NavCategory[] }) {
 
       {/* Mobile drawer */}
       {mobileOpen && (
-        <div className="border-t border-brand-paper/10 bg-brand-navy px-4 pb-6 pt-2 lg:hidden">
+        <div className="border-t border-brand-paper/10 bg-brand-dark px-4 pb-6 pt-2 lg:hidden">
           <span className="mb-2 mt-4 block font-mono text-[10px] uppercase tracking-[0.15em] text-brand-amber">
             Services
           </span>

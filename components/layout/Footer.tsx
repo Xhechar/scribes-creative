@@ -8,55 +8,22 @@ import {
 } from "react-icons/fa6";
 import { getAllCategories } from "@/lib/services/category.service";
 import { siteConfig } from "@/lib/data/site-config";
+import { Logo } from "@/components/ui/Logo";
 import type { NavCategory } from "@/types";
-
-function RegMark({ className = "" }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 16 16"
-      className={className}
-      fill="none"
-      aria-hidden="true"
-    >
-      <circle cx="8" cy="8" r="6.5" stroke="currentColor" strokeWidth="1" />
-      <line
-        x1="8"
-        y1="1"
-        x2="8"
-        y2="15"
-        stroke="currentColor"
-        strokeWidth="1"
-      />
-      <line
-        x1="1"
-        y1="8"
-        x2="15"
-        y2="8"
-        stroke="currentColor"
-        strokeWidth="1"
-      />
-    </svg>
-  );
-}
 
 export async function Footer() {
   const categories = await getAllCategories();
   const year = new Date().getFullYear();
 
   return (
-    <footer className="bg-brand-navy text-brand-paper overflow-hidden">
+    <footer className="overflow-hidden bg-brand-dark text-brand-paper">
       {/* Main footer content */}
       <div className="mx-auto max-w-8xl px-4 py-12 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 gap-10 md:grid-cols-4">
           {/* Brand */}
           <div>
-            <div className="flex items-center gap-1.5">
-              <RegMark className="h-4 w-4 text-brand-red" />
-              <span className="font-display text-xl font-extrabold tracking-tight text-brand-paper">
-                SCRIBES
-              </span>
-            </div>
-            <p className="mt-3 font-body text-sm text-brand-paper/70">
+            <Logo height={50} variant="dark-bg" />
+            <p className="mt-4 font-body text-sm text-brand-paper/70">
               {siteConfig.tagline}
             </p>
             <div className="mt-4 flex gap-3">
@@ -66,7 +33,7 @@ export async function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Facebook"
-                  className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-paper/10 transition-colors hover:bg-brand-amber hover:text-brand-navy"
+                  className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-paper/10 transition-colors hover:bg-brand-amber hover:text-brand-dark"
                 >
                   <FaFacebookF className="h-4 w-4" />
                 </a>
@@ -77,7 +44,7 @@ export async function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Instagram"
-                  className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-paper/10 transition-colors hover:bg-brand-amber hover:text-brand-navy"
+                  className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-paper/10 transition-colors hover:bg-brand-amber hover:text-brand-dark"
                 >
                   <FaInstagram className="h-4 w-4" />
                 </a>
@@ -88,7 +55,7 @@ export async function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="TikTok"
-                  className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-paper/10 transition-colors hover:bg-brand-amber hover:text-brand-navy"
+                  className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-paper/10 transition-colors hover:bg-brand-amber hover:text-brand-dark"
                 >
                   <FaTiktok className="h-4 w-4" />
                 </a>
@@ -120,7 +87,7 @@ export async function Footer() {
             </ul>
           </div>
 
-          {/* Categories */}
+          {/* Services */}
           <div>
             <span className="font-mono text-[10px] uppercase tracking-[0.15em] text-brand-amber">
               Services
@@ -190,10 +157,10 @@ export async function Footer() {
         </div>
       </div>
 
-      {/* Massive wordmark — decorative, sits flush at the bottom */}
+      {/* Massive decorative wordmark — uses the business name as typographic texture */}
       <div className="select-none overflow-hidden border-t border-brand-paper/5">
         <p
-          className="font-display font-extrabold leading-none tracking-tighter text-brand-paper/[0.1] text-center"
+          className="font-display font-extrabold leading-none tracking-tighter text-brand-paper/[0.05] text-center"
           style={{ fontSize: "clamp(80px, 20vw, 260px)" }}
           aria-hidden="true"
         >
