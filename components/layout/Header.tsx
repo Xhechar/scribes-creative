@@ -53,7 +53,7 @@ export function Header({ categories }: { categories: NavCategory[] }) {
     <header className="sticky top-0 z-50 bg-brand-dark">
       <div className="mx-auto flex max-w-8xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
         {/* Logo */}
-        <Logo height={50} variant="dark-bg" />
+        <Logo height={50} variant="dark-bg" showName={true} />
 
         {/* Desktop nav */}
         <nav className="hidden items-center gap-8 lg:flex">
