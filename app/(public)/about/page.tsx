@@ -129,10 +129,9 @@ export default async function AboutPage() {
               We help businesses look like they mean business.
             </h1>
             <p className="mt-5 font-body text-base text-brand-slate sm:text-lg">
-              {/* TODO: replace with the owner's real founding story */}
               Scribes Creative Solutions started with a simple observation: most
-              businesses in Eldoret have something real to offer, but nothing
-              that shows it. We exist to close that gap — from your first logo
+              businesses have something real and solid to offer, but nothing
+              that shows it. We exist to close that gap and ensure your business gets the attention it deserves — from your first logo
               sketch to the sign above your door.
             </p>
 
