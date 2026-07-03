@@ -45,7 +45,7 @@ const stats = [
 // have one. Captions are what carry the "what we do" message until then.
 const galleryImages = [
   {
-    src: "https://i.pinimg.com/736x/06/cd/7c/06cd7c132ba165ab44015d6a0e408e00.jpg",
+    src: "https://res.cloudinary.com/dakyiye2e/image/upload/v1783063649/zmvrkg8pkmj6kbu4k8eu.webp",
     label: "Brand Identity",
     className: "row-span-2",
     priority: true,
@@ -57,7 +57,7 @@ const galleryImages = [
     priority: false,
   },
   {
-    src: "https://i.pinimg.com/1200x/cf/49/c1/cf49c104b301105276ac75aac74f1cb8.jpg",
+    src: "https://res.cloudinary.com/dakyiye2e/image/upload/v1783064070/cvrhfrxkpdsweanlohs2.jpg",
     label: "Events & Weddings",
     className: "",
     priority: false,

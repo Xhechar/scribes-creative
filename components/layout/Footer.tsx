@@ -22,7 +22,7 @@ export async function Footer() {
         <div className="grid grid-cols-1 gap-10 md:grid-cols-4">
           {/* Brand */}
           <div>
-            <Logo height={50} variant="dark-bg" showName={true} />
+            <Logo height={40} variant="dark-bg" showName={true} />
             <p className="mt-4 font-body text-sm text-brand-paper/70">
               {siteConfig.tagline}
             </p>
