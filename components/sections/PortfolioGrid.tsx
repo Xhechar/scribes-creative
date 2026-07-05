@@ -5,6 +5,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { cn } from "@/lib/utils";
+import {
+  CloudinaryPresets,
+  getCloudinaryBlurUrl,
+} from "@/lib/utils/cloudinary";
 
 interface PortfolioItem {
   id: string;
@@ -96,9 +100,11 @@ export function PortfolioGrid({
                   >
                     {cover ? (
                       <Image
-                        src={cover}
+                        src={CloudinaryPresets.card(cover)}
                         alt={item.title}
                         fill
+                        placeholder="blur"
+                        blurDataURL={getCloudinaryBlurUrl(cover)}
                         sizes="(min-width: 1024px) 360px, (min-width: 640px) 50vw, 100vw"
                         className="object-cover transition-transform duration-500 group-hover:scale-105"
                       />

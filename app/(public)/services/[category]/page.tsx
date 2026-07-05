@@ -20,6 +20,10 @@ import { BenefitsRow } from "@/components/ui/BenefitsRow";
 import { FaqSection } from "@/components/sections/FaqSection";
 import { siteConfig } from "@/lib/data/site-config";
 import type { ServiceItem, PortfolioItemSummary } from "@/types";
+import {
+  CloudinaryPresets,
+  getCloudinaryBlurUrl,
+} from "@/lib/utils/cloudinary";
 
 export async function generateStaticParams() {
   const categories = await getAllCategories();
@@ -201,9 +205,11 @@ export default async function CategoryPage({
                   >
                     {cover && (
                       <Image
-                        src={cover}
+                        src={CloudinaryPresets.card(cover)}
                         alt={item.title}
                         fill
+                        placeholder="blur"
+                        blurDataURL={getCloudinaryBlurUrl(cover)}
                         sizes="(min-width: 1024px) 340px, (min-width: 640px) 50vw, 100vw"
                         className="object-cover transition-transform duration-500 group-hover:scale-105"
                       />

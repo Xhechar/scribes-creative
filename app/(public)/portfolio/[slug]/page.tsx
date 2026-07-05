@@ -11,6 +11,10 @@ import {
 import { Breadcrumb } from "@/components/ui/shared";
 import { siteConfig } from "@/lib/data/site-config";
 import type { PortfolioImage } from "@/types";
+import {
+  CloudinaryPresets,
+  getCloudinaryBlurUrl,
+} from "@/lib/utils/cloudinary";
 
 export async function generateStaticParams() {
   const items = await getAllPortfolioItems();
@@ -75,7 +79,9 @@ export default async function PortfolioItemPage({
               {cover && (
                 <div className="relative aspect-[16/10] overflow-hidden rounded-2xl">
                   <Image
-                    src={cover.url}
+                    src={CloudinaryPresets.detail(cover.url)}
+                    placeholder="blur"
+                    blurDataURL={getCloudinaryBlurUrl(cover.url)}
                     alt={item.title}
                     fill
                     priority
@@ -97,7 +103,9 @@ export default async function PortfolioItemPage({
                       className="relative aspect-square overflow-hidden rounded-xl"
                     >
                       <Image
-                        src={img.url}
+                        src={CloudinaryPresets.card(img.url)}
+                        placeholder="blur"
+                        blurDataURL={getCloudinaryBlurUrl(img.url)}
                         alt={item.title}
                         fill
                         sizes="(min-width: 640px) 220px, 50vw"

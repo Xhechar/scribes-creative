@@ -8,6 +8,10 @@ import { Breadcrumb } from "@/components/ui/shared";
 import { JsonLd, blogPostingSchema } from "@/components/seo/JsonLD";
 import { siteConfig } from "@/lib/data/site-config";
 import type { PostFull } from "@/types";
+import {
+  CloudinaryPresets,
+  getCloudinaryBlurUrl,
+} from "@/lib/utils/cloudinary";
 
 export async function generateStaticParams() {
   const posts = await getAllPosts();
@@ -100,13 +104,15 @@ export default async function BlogPostPage({
           {post.coverImage && (
             <div className="relative mb-10 aspect-[16/9] overflow-hidden rounded-2xl">
               <Image
-                src={post.coverImage}
+                src={CloudinaryPresets.blog(post.coverImage)}
                 alt={post.title}
                 fill
                 priority
                 sizes="(min-width: 768px) 700px, 100vw"
                 className="object-cover"
               />
+              placeholder="blur" blurDataURL=
+              {getCloudinaryBlurUrl(post.coverImage)}
             </div>
           )}
           <div

@@ -4,11 +4,15 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { getAllPosts } from "@/lib/services/post.service";
 import type { PostSummary } from "@/types";
+import {
+  CloudinaryPresets,
+  getCloudinaryBlurUrl,
+} from "@/lib/utils/cloudinary";
 
 export const metadata: Metadata = {
   title: "Blog",
   description:
-    "Branding tips, print guides, and business advice from Scribes Creative Solutions in Eldoret.",
+    "Branding tips, print guides, and business advice from Scribes Creative Solutions in Nairobi.",
 };
 
 function formatDate(date: Date | null) {
@@ -57,7 +61,9 @@ export default async function BlogPage() {
                   {post.coverImage ? (
                     <div className="relative aspect-[16/9] overflow-hidden">
                       <Image
-                        src={post.coverImage}
+                        src={CloudinaryPresets.blogCard(post.coverImage)}
+                        placeholder="blur"
+                        blurDataURL={getCloudinaryBlurUrl(post.coverImage)}
                         alt={post.title}
                         fill
                         sizes="(min-width: 1024px) 360px, (min-width: 640px) 50vw, 100vw"
