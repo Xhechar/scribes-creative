@@ -191,13 +191,13 @@ export default async function AboutPage() {
       {/* ── Story — image + text, alternating from hero ── */}
       <section className="bg-brand-paper py-16 sm:py-20">
         <div className="mx-auto grid max-w-6xl gap-10 px-4 sm:px-6 lg:grid-cols-2 lg:items-center lg:gap-12 lg:px-8">
-          <div className="relative order-2 aspect-[4/3] overflow-hidden rounded-2xl border border-brand-navy/10 shadow-md lg:order-1">
+          <div className="relative order-2 aspect-[16/10] overflow-hidden rounded-2xl border border-brand-navy/10 shadow-md lg:order-1">
             <Image
               src="https://res.cloudinary.com/dakyiye2e/image/upload/v1785140638/t9hoi7lwcyc8izhiexrr.png"
               alt="The Scribes team at work on a client project"
               fill
               sizes="(min-width: 1024px) 480px, 100vw"
-              className="object-cover"
+              className="h-full w-full object-cover"
             />
           </div>
           <div className="order-1 lg:order-2">
