@@ -66,7 +66,7 @@ export function Logo({
       <span
         className={cn(
           "font-display font-extrabold tracking-tight",
-          isDark ? "text-brand-paper" : "text-brand-navy",
+          isDark ? "text-brand-red" : "text-brand-navy",
         )}
         style={{ fontSize: Math.round(height * 0.52) }}
       >
@@ -75,7 +75,7 @@ export function Logo({
       <span
         className={cn(
           "mt-0.5 font-mono uppercase tracking-[0.15em]",
-          isDark ? "text-brand-paper/50" : "text-brand-slate",
+          isDark ? "text-brand-paper" : "text-brand-slate",
         )}
         style={{ fontSize: Math.round(height * 0.24) }}
       >
