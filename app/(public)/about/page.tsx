@@ -131,8 +131,9 @@ export default async function AboutPage() {
             <p className="mt-5 font-body text-base text-brand-slate sm:text-lg">
               Scribes Creative Solutions started with a simple observation: most
               businesses have something real and solid to offer, but nothing
-              that shows it. We exist to close that gap and ensure your business gets the attention it deserves — from your first logo
-              sketch to the sign above your door.
+              that shows it. We exist to close that gap and ensure your business
+              gets the attention it deserves — from your first logo sketch to
+              the sign above your door.
             </p>
 
             <TrustStrip
@@ -159,7 +160,7 @@ export default async function AboutPage() {
 
           <div className="relative aspect-[4/5] overflow-hidden rounded-2xl border border-brand-navy/10 shadow-lg lg:aspect-[5/6]">
             <Image
-              src="https://picsum.photos/seed/scribes-about-hero/800/1000"
+              src="https://res.cloudinary.com/dakyiye2e/image/upload/v1786872373/sfhbmxjbex4nep90aelb.png"
               alt="Inside the Scribes Creative Solutions studio"
               fill
               priority
@@ -192,7 +193,7 @@ export default async function AboutPage() {
         <div className="mx-auto grid max-w-6xl gap-10 px-4 sm:px-6 lg:grid-cols-2 lg:items-center lg:gap-12 lg:px-8">
           <div className="relative order-2 aspect-[4/3] overflow-hidden rounded-2xl border border-brand-navy/10 shadow-md lg:order-1">
             <Image
-              src="https://picsum.photos/seed/scribes-about-process/800/600"
+              src="https://res.cloudinary.com/dakyiye2e/image/upload/v1785140638/t9hoi7lwcyc8izhiexrr.png"
               alt="The Scribes team at work on a client project"
               fill
               sizes="(min-width: 1024px) 480px, 100vw"
