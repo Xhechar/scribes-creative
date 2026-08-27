@@ -2,7 +2,7 @@ import prisma from "@/lib/prisma";
 
 export async function getFeaturedPortfolioItems() {
   return prisma.portfolioItem.findMany({
-    where: { isFeatured: true },
+    // where: { isFeatured: true },
     orderBy: { displayOrder: "asc" },
     include: {
       category: true,
