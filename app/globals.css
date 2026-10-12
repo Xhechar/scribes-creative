@@ -2,15 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
-@plugin "daisyui";
-
 @layer base {
   html {
     scroll-behavior: smooth;
   }
 
   body {
-    @apply bg-brand-paper text-brand-navy font-body antialiased;
+    @apply bg-brand-paper text-brand-dark font-body antialiased;
   }
 
   h1,
@@ -21,11 +19,11 @@
   }
 
   ::selection {
-    @apply bg-brand-red text-brand-paper;
+    @apply bg-brand-navy text-brand-paper;
   }
 
   :focus-visible {
-    @apply outline-2 outline-offset-2 outline-brand-red;
+    @apply outline-2 outline-offset-2 outline-brand-navy;
   }
 }
 
@@ -71,14 +69,14 @@
   font-weight: 700;
   margin-top: 1.5rem;
   margin-bottom: 0.5rem;
-  color: #5241c5;
+  color: #160f3a;
 }
 .ProseMirror h3 {
   font-size: 1.125rem;
   font-weight: 700;
   margin-top: 1.25rem;
   margin-bottom: 0.4rem;
-  color: #5241c5;
+  color: #160f3a;
 }
 .ProseMirror p {
   margin-top: 0;
@@ -94,21 +92,20 @@
   font-style: italic;
 }
 .ProseMirror blockquote {
-  border-left: 3px solid #FF9D00;
+  border-left: 3px solid #e68e66;
   padding-left: 1rem;
   font-style: italic;
   color: #5B5F73;
   margin: 1rem 0;
 }
 .ProseMirror a {
-  color: #cf564d;
+  color: #5241c5;
   text-decoration: underline;
   text-underline-offset: 2px;
 }
 .ProseMirror hr {
   border: none;
-  border-top: 1px solid #000259;
-  opacity: 0.15;
+  border-top: 1px solid rgba(22, 15, 58, 0.12);
   margin: 1.5rem 0;
 }
 .ProseMirror p.is-editor-empty:first-child::before {
