@@ -115,3 +115,12 @@
   height: 0;
   float: left;
 }
+
+/* Hero studio scene: one orchestrated entrance, items rise in sequence. */
+@keyframes hero-rise {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: none; }
+}
+.hs-rise {
+  animation: hero-rise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}

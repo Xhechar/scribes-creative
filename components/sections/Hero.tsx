@@ -37,7 +37,7 @@ function RegistrationMark({ className = "" }: { className?: string }) {
 
 const stats = [
   { value: "10+", label: "Years In Business" }, // TODO: confirm real figure
-  { value: "500+", label: "Projects Delivered" }, // TODO: confirm real figure
+  { value: "100+", label: "Projects Delivered" }, // TODO: confirm real figure
   { value: "20+", label: "5-Star Reviews" },
 ];
 
